@@ -21,3 +21,10 @@
 *.i*86
 *.x86_64
 *.hex
+
+# Folders
+build
+sim
+
+# Config
+.lock-waf_darwin_build
