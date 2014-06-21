@@ -1,0 +1,24 @@
+{
+    "companyName": "mkorotkovas@yahoo.com",
+    "longName": "DotsRTime",
+    "versionLabel": "1.0",
+    "uuid": "42950f77-0eda-476b-958a-df87537d3eb9",
+    "appKeys": {},
+    "shortName": "DotsRTime",
+    "capabilities": [
+        "configurable"
+    ],
+    "watchapp": {
+        "watchface": true
+    },
+    "resources": {
+        "media": [
+            {
+                "file": "fonts/Ozone.ttf",
+                "name": "FONT_OZONE_47",
+                "type": "font"
+            }
+        ]
+    },
+    "versionCode": 1
+}
