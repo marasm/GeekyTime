@@ -22,6 +22,21 @@
                 "file": "fonts/Oblivious.ttf",
                 "name": "FONT_DATE_22",
                 "type": "font"
+            },
+            {
+                "file": "fonts/Oblivious.ttf",
+                "name": "FONT_TEMP_40",
+                "type": "font"
+            },
+            {
+                "file": "images/sunny.png",
+                "name": "IMG_SUNNY",
+                "type": "png"
+            },
+            {
+                "file": "images/therm.png",
+                "name": "IMG_THERM",
+                "type": "png"
             }
         ]
     },
