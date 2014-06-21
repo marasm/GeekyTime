@@ -1,10 +1,10 @@
 {
     "companyName": "mkorotkovas@yahoo.com",
-    "longName": "DotsRTime",
+    "longName": "Sqaure Time",
     "versionLabel": "1.0",
     "uuid": "42950f77-0eda-476b-958a-df87537d3eb9",
     "appKeys": {},
-    "shortName": "DotsRTime",
+    "shortName": "SquareTime",
     "capabilities": [
         "configurable"
     ],
@@ -14,8 +14,13 @@
     "resources": {
         "media": [
             {
-                "file": "fonts/Ozone.ttf",
-                "name": "FONT_OZONE_47",
+                "file": "fonts/Petitinho.ttf",
+                "name": "FONT_TIME_40",
+                "type": "font"
+            },
+            {
+                "file": "fonts/Petitinho.ttf",
+                "name": "FONT_DATE_18",
                 "type": "font"
             }
         ]
