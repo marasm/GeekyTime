@@ -42,7 +42,7 @@ static void init() {
 
   Layer *window_layer = window_get_root_layer(window);
 
-  GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TIME_40));
+  GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TIME_42));
 
   time_layer = text_layer_create(GRect(2, 10, 144-2 /* width */, 62 /* 168 max height */));
   text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
@@ -52,7 +52,7 @@ static void init() {
 
   layer_add_child(window_layer, text_layer_get_layer(time_layer));
 
-  GFont custom_font_date = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DATE_18));
+  GFont custom_font_date = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DATE_22));
   date_layer = text_layer_create(GRect(2, 65, 144-2 /* width */, 34 /* 168 max height */));
   text_layer_set_text_alignment(date_layer, GTextAlignmentCenter);
   text_layer_set_font(date_layer, custom_font_date);
@@ -61,7 +61,8 @@ static void init() {
 
   layer_add_child(window_layer, text_layer_get_layer(date_layer));
 
-
+   // text_layer_set_text(time_layer, "88:88");
+   // text_layer_set_text(date_layer, "Sun 12:22");
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
   handle_minute_tick(current_time, MINUTE_UNIT);

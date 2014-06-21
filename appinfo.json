@@ -1,10 +1,10 @@
 {
     "companyName": "mkorotkovas@yahoo.com",
-    "longName": "Sqaure Time",
+    "longName": "Geeky Time",
     "versionLabel": "1.0",
     "uuid": "42950f77-0eda-476b-958a-df87537d3eb9",
     "appKeys": {},
-    "shortName": "SquareTime",
+    "shortName": "GeekyTime",
     "capabilities": [
         "configurable"
     ],
@@ -14,13 +14,13 @@
     "resources": {
         "media": [
             {
-                "file": "fonts/Petitinho.ttf",
-                "name": "FONT_TIME_40",
+                "file": "fonts/Oblivious.ttf",
+                "name": "FONT_TIME_42",
                 "type": "font"
             },
             {
-                "file": "fonts/Petitinho.ttf",
-                "name": "FONT_DATE_18",
+                "file": "fonts/Oblivious.ttf",
+                "name": "FONT_DATE_22",
                 "type": "font"
             }
         ]
