@@ -12,14 +12,61 @@ static TextLayer *time_layer;
 static TextLayer *date_layer;
 static TextLayer *temp_layer;
 
+static BitmapLayer *battery_layer;
 static BitmapLayer *icon_layer;
 static BitmapLayer *therm_layer;
+static GBitmap *battery_bitmap = NULL;
 static GBitmap *icon_bitmap = NULL;
 static GBitmap *therm_bitmap = NULL;
 
 static const uint32_t WEATHER_ICONS[] = {
   RESOURCE_ID_IMG_SUNNY //0
 };
+static const uint32_t BATTERY_ICONS[] = {
+  RESOURCE_ID_IMG_BATTERY_CHRG, //0
+  RESOURCE_ID_IMG_BATTERY_20,   //1
+  RESOURCE_ID_IMG_BATTERY_40,   //2
+  RESOURCE_ID_IMG_BATTERY_60,   //3
+  RESOURCE_ID_IMG_BATTERY_80,   //4
+  RESOURCE_ID_IMG_BATTERY_100,  //5
+};
+
+
+static void handle_battery(BatteryChargeState charge_state) {
+  if (battery_bitmap) {
+    gbitmap_destroy(battery_bitmap);
+  }
+  if (charge_state.is_charging || charge_state.is_plugged) {
+
+    battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[0]);
+  } 
+  else {
+    if (charge_state.charge_percent >= 80) //80 - 100% charge
+    {
+      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[5]);
+    } 
+    else if (charge_state.charge_percent >= 60 && charge_state.charge_percent < 80) //60 - 80% charge
+    {
+      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[4]);
+    }
+    else if (charge_state.charge_percent >= 40 && charge_state.charge_percent < 60) //40 - 60% charge
+    {
+      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[3]);
+    }
+    else if (charge_state.charge_percent >= 20 && charge_state.charge_percent < 40) //20 - 40% charge
+    {
+      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[2]);
+    }
+    else  //less than 20% charge
+    {
+      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[1]);
+    }   
+    
+  }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "handle_battery: %i remaining", charge_state.charge_percent);
+  bitmap_layer_set_bitmap(battery_layer, battery_bitmap);
+  layer_mark_dirty(bitmap_layer_get_layer(battery_layer));
+}
 
 static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
 
@@ -40,8 +87,10 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
 
   text_layer_set_text(time_layer, time_text);
   text_layer_set_text(date_layer, date_text);
-}
 
+  //update the battery
+  handle_battery(battery_state_service_peek());
+}
 
 
 static void init() {
@@ -51,6 +100,11 @@ static void init() {
   window_set_background_color(window, GColorBlack);
 
   Layer *window_layer = window_get_root_layer(window);
+
+  //BATTERY
+  battery_layer = bitmap_layer_create(GRect(144-44, 3, 36, 10));
+  layer_add_child(window_layer, bitmap_layer_get_layer(battery_layer));
+  
 
   //TIME
   GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TIME_42));
@@ -88,22 +142,26 @@ static void init() {
 
   layer_add_child(window_layer, text_layer_get_layer(temp_layer));
   
-
+  //WEATHER ICON
   icon_layer = bitmap_layer_create(GRect(5, 100, 60, 60));
   layer_add_child(window_layer, bitmap_layer_get_layer(icon_layer));
 
-
+  //TEST DUMMY Stuff
+  // battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[0]);
+  // bitmap_layer_set_bitmap(battery_layer, battery_bitmap);
   icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[0]);
   bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
    // text_layer_set_text(time_layer, "88:88");
    // text_layer_set_text(date_layer, "Sun 12:22");
   text_layer_set_text(temp_layer, "74");
   
+
+  //EVENT SUBSCRIBTIONS
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
   handle_minute_tick(current_time, MINUTE_UNIT);
   tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
-
+  battery_state_service_subscribe(&handle_battery);
   
 }
 
@@ -111,6 +169,8 @@ static void deinit() {
   text_layer_destroy(time_layer);
   text_layer_destroy(date_layer);
   text_layer_destroy(temp_layer);
+  gbitmap_destroy(battery_bitmap);
+  bitmap_layer_destroy(battery_layer);
   gbitmap_destroy(icon_bitmap);
   bitmap_layer_destroy(icon_layer);
   gbitmap_destroy(therm_bitmap);

@@ -29,6 +29,36 @@
                 "type": "font"
             },
             {
+                "file": "images/battery_100.png",
+                "name": "IMG_BATTERY_100",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_80.png",
+                "name": "IMG_BATTERY_80",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_60.png",
+                "name": "IMG_BATTERY_60",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_40.png",
+                "name": "IMG_BATTERY_40",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_20.png",
+                "name": "IMG_BATTERY_20",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_chrg.png",
+                "name": "IMG_BATTERY_CHRG",
+                "type": "png"
+            },
+            {
                 "file": "images/sunny.png",
                 "name": "IMG_SUNNY",
                 "type": "png"
