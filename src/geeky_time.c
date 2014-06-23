@@ -12,12 +12,16 @@ static TextLayer *time_layer;
 static TextLayer *date_layer;
 static TextLayer *temp_layer;
 
+static BitmapLayer *bt_layer;
 static BitmapLayer *battery_layer;
 static BitmapLayer *icon_layer;
 static BitmapLayer *therm_layer;
+static GBitmap *bt_bitmap = NULL;
 static GBitmap *battery_bitmap = NULL;
 static GBitmap *icon_bitmap = NULL;
 static GBitmap *therm_bitmap = NULL;
+
+static bool bt_connected = 1;
 
 static const uint32_t WEATHER_ICONS[] = {
   RESOURCE_ID_IMG_SUNNY //0
@@ -31,6 +35,30 @@ static const uint32_t BATTERY_ICONS[] = {
   RESOURCE_ID_IMG_BATTERY_100,  //5
 };
 
+static void handle_bluetooth(bool connected) {
+  if (bt_bitmap)
+  {
+    gbitmap_destroy(bt_bitmap);
+  }
+  if (connected)
+  {
+    bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_BT_ON);
+    if (!bt_connected)
+    {
+      vibes_double_pulse();
+      bt_connected = 1;
+    }
+  }
+  else
+  {
+    bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_BT_OFF);
+    bt_connected = 0;
+    vibes_long_pulse();
+  }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "handle_bluetooth connected=%i", connected);
+  bitmap_layer_set_bitmap(bt_layer, bt_bitmap);
+  layer_mark_dirty(bitmap_layer_get_layer(bt_layer));
+}
 
 static void handle_battery(BatteryChargeState charge_state) {
   if (battery_bitmap) {
@@ -90,6 +118,7 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
 
   //update the battery
   handle_battery(battery_state_service_peek());
+  handle_bluetooth(bluetooth_connection_service_peek());
 }
 
 
@@ -101,10 +130,13 @@ static void init() {
 
   Layer *window_layer = window_get_root_layer(window);
 
+  //BLUETOOTH
+  bt_layer = bitmap_layer_create(GRect(85, 3, 10, 10));
+  layer_add_child(window_layer, bitmap_layer_get_layer(bt_layer));
+
   //BATTERY
   battery_layer = bitmap_layer_create(GRect(144-44, 3, 36, 10));
   layer_add_child(window_layer, bitmap_layer_get_layer(battery_layer));
-  
 
   //TIME
   GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TIME_42));
@@ -162,13 +194,15 @@ static void init() {
   handle_minute_tick(current_time, MINUTE_UNIT);
   tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
   battery_state_service_subscribe(&handle_battery);
-  
+  bluetooth_connection_service_subscribe(&handle_bluetooth);
 }
 
 static void deinit() {
   text_layer_destroy(time_layer);
   text_layer_destroy(date_layer);
   text_layer_destroy(temp_layer);
+  gbitmap_destroy(bt_bitmap);
+  bitmap_layer_destroy(bt_layer);
   gbitmap_destroy(battery_bitmap);
   bitmap_layer_destroy(battery_layer);
   gbitmap_destroy(icon_bitmap);

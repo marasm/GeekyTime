@@ -14,6 +14,12 @@
     "resources": {
         "media": [
             {
+                "menuIcon": true,
+                "type": "png",
+                "name": "IMAGE_MENU_ICON",
+                "file": "images/app_icon.png"
+            },
+            {
                 "file": "fonts/Oblivious.ttf",
                 "name": "FONT_TIME_42",
                 "type": "font"
@@ -56,6 +62,16 @@
             {
                 "file": "images/battery_chrg.png",
                 "name": "IMG_BATTERY_CHRG",
+                "type": "png"
+            },
+            {
+                "file": "images/bt_on.png",
+                "name": "IMG_BT_ON",
+                "type": "png"
+            },
+            {
+                "file": "images/bt_off.png",
+                "name": "IMG_BT_OFF",
                 "type": "png"
             },
             {
