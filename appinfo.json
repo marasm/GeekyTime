@@ -75,8 +75,13 @@
                 "type": "png"
             },
             {
-                "file": "images/sunny.png",
-                "name": "IMG_SUNNY",
+                "file": "images/weather_icn_01d.png",
+                "name": "IMG_WEATHER_01d",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_02d.png",
+                "name": "IMG_WEATHER_02d",
                 "type": "png"
             },
             {

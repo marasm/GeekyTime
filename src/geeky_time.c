@@ -23,9 +23,6 @@ static GBitmap *therm_bitmap = NULL;
 
 static bool bt_connected = 1;
 
-static const uint32_t WEATHER_ICONS[] = {
-  RESOURCE_ID_IMG_SUNNY //0
-};
 static const uint32_t BATTERY_ICONS[] = {
   RESOURCE_ID_IMG_BATTERY_CHRG, //0
   RESOURCE_ID_IMG_BATTERY_20,   //1
@@ -69,19 +66,19 @@ static void handle_battery(BatteryChargeState charge_state) {
     battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[0]);
   } 
   else {
-    if (charge_state.charge_percent >= 80) //80 - 100% charge
+    if (charge_state.charge_percent > 80) //80 - 100% charge
     {
       battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[5]);
     } 
-    else if (charge_state.charge_percent >= 60 && charge_state.charge_percent < 80) //60 - 80% charge
+    else if (charge_state.charge_percent > 60 && charge_state.charge_percent <= 80) //60 - 80% charge
     {
       battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[4]);
     }
-    else if (charge_state.charge_percent >= 40 && charge_state.charge_percent < 60) //40 - 60% charge
+    else if (charge_state.charge_percent > 40 && charge_state.charge_percent <= 60) //40 - 60% charge
     {
       battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[3]);
     }
-    else if (charge_state.charge_percent >= 20 && charge_state.charge_percent < 40) //20 - 40% charge
+    else if (charge_state.charge_percent > 20 && charge_state.charge_percent <= 40) //20 - 40% charge
     {
       battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[2]);
     }
