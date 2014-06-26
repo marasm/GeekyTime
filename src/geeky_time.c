@@ -49,8 +49,11 @@ static void handle_bluetooth(bool connected) {
   else
   {
     bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_BT_OFF);
-    bt_connected = 0;
-    vibes_long_pulse();
+    if (bt_connected)
+    {
+      bt_connected = 0;
+      vibes_long_pulse();
+    }
   }
   APP_LOG(APP_LOG_LEVEL_DEBUG, "handle_bluetooth connected=%i", connected);
   bitmap_layer_set_bitmap(bt_layer, bt_bitmap);
@@ -178,7 +181,7 @@ static void init() {
   //TEST DUMMY Stuff
   // battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[0]);
   // bitmap_layer_set_bitmap(battery_layer, battery_bitmap);
-  icon_bitmap = gbitmap_create_with_resource(WEATHER_ICONS[0]);
+  icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01d);
   bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
    // text_layer_set_text(time_layer, "88:88");
    // text_layer_set_text(date_layer, "Sun 12:22");
