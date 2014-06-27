@@ -8,6 +8,7 @@
 
 static Window *window;
 
+static TextLayer *bat_perc_layer;
 static TextLayer *time_layer;
 static TextLayer *date_layer;
 static TextLayer *temp_layer;
@@ -61,6 +62,7 @@ static void handle_bluetooth(bool connected) {
 }
 
 static void handle_battery(BatteryChargeState charge_state) {
+  static char battery_text[] = "100%";
   if (battery_bitmap) {
     gbitmap_destroy(battery_bitmap);
   }
@@ -92,6 +94,8 @@ static void handle_battery(BatteryChargeState charge_state) {
     
   }
   APP_LOG(APP_LOG_LEVEL_DEBUG, "handle_battery: %i remaining", charge_state.charge_percent);
+  snprintf(battery_text, sizeof(battery_text), "%d%%", charge_state.charge_percent);
+  text_layer_set_text(bat_perc_layer, battery_text);
   bitmap_layer_set_bitmap(battery_layer, battery_bitmap);
   layer_mark_dirty(bitmap_layer_get_layer(battery_layer));
 }
@@ -131,8 +135,18 @@ static void init() {
   Layer *window_layer = window_get_root_layer(window);
 
   //BLUETOOTH
-  bt_layer = bitmap_layer_create(GRect(85, 3, 10, 10));
+  bt_layer = bitmap_layer_create(GRect(55, 3, 10, 10));
   layer_add_child(window_layer, bitmap_layer_get_layer(bt_layer));
+
+  //BATTERY PERCENT
+  GFont custom_font_bat_perc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BAT_PERC_10));
+  bat_perc_layer = text_layer_create(GRect(68, -3, 30, 16));
+  text_layer_set_text_alignment(bat_perc_layer, GTextAlignmentRight);
+  text_layer_set_font(bat_perc_layer, custom_font_bat_perc);
+  text_layer_set_background_color(bat_perc_layer, GColorClear);
+  text_layer_set_text_color(bat_perc_layer, GColorWhite);
+
+  layer_add_child(window_layer, text_layer_get_layer(bat_perc_layer));
 
   //BATTERY
   battery_layer = bitmap_layer_create(GRect(144-44, 3, 36, 10));
@@ -179,9 +193,10 @@ static void init() {
   layer_add_child(window_layer, bitmap_layer_get_layer(icon_layer));
 
   //TEST DUMMY Stuff
+  // text_layer_set_text(bat_perc_layer, "100%");
   // battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[0]);
   // bitmap_layer_set_bitmap(battery_layer, battery_bitmap);
-  icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01d);
+  icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
   bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
    // text_layer_set_text(time_layer, "88:88");
    // text_layer_set_text(date_layer, "Sun 12:22");
@@ -198,6 +213,7 @@ static void init() {
 }
 
 static void deinit() {
+  text_layer_destroy(bat_perc_layer);
   text_layer_destroy(time_layer);
   text_layer_destroy(date_layer);
   text_layer_destroy(temp_layer);

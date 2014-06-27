@@ -21,6 +21,11 @@
             },
             {
                 "file": "fonts/Oblivious.ttf",
+                "name": "FONT_BAT_PERC_10",
+                "type": "font"
+            },
+            {
+                "file": "fonts/Oblivious.ttf",
                 "name": "FONT_TIME_42",
                 "type": "font"
             },
@@ -72,6 +77,11 @@
             {
                 "file": "images/bt_off.png",
                 "name": "IMG_BT_OFF",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_00.png",
+                "name": "IMG_WEATHER_00",
                 "type": "png"
             },
             {
