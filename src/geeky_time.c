@@ -12,6 +12,7 @@ static TextLayer *bat_perc_layer;
 static TextLayer *time_layer;
 static TextLayer *date_layer;
 static TextLayer *temp_layer;
+static TextLayer *weather_loc_layer;
 
 static BitmapLayer *bt_layer;
 static BitmapLayer *battery_layer;
@@ -171,26 +172,37 @@ static void init() {
   text_layer_set_text_color(date_layer, GColorWhite);
 
   layer_add_child(window_layer, text_layer_get_layer(date_layer));
+  
+  //WEATHER ICON
+  icon_layer = bitmap_layer_create(GRect(5, 95, 60, 60));
+  layer_add_child(window_layer, bitmap_layer_get_layer(icon_layer));
 
   //THERM
-  therm_layer = bitmap_layer_create(GRect(65, 112, 16, 36));
+  therm_layer = bitmap_layer_create(GRect(65, 107, 16, 36));
   layer_add_child(window_layer, bitmap_layer_get_layer(therm_layer));
   therm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_THERM);
   bitmap_layer_set_bitmap(therm_layer, therm_bitmap);
 
   //TEMP
   GFont custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
-  temp_layer = text_layer_create(GRect(81, 105, 144-85 /* width */, 60 /* 168 max height */));
+  temp_layer = text_layer_create(GRect(81, 100, 144-85 /* width */, 60 /* 168 max height */));
   text_layer_set_text_alignment(temp_layer, GTextAlignmentCenter);
   text_layer_set_font(temp_layer, custom_font_temp);
   text_layer_set_background_color(temp_layer, GColorClear);
   text_layer_set_text_color(temp_layer, GColorWhite);
 
   layer_add_child(window_layer, text_layer_get_layer(temp_layer));
+
+  //WEATHER LOCATION
+  GFont custom_font_weather_loc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LOCATION_10));
+  weather_loc_layer = text_layer_create(GRect(10, 155, 134 /* width */, 13 /* 168 max height */));
+  text_layer_set_text_alignment(weather_loc_layer, GTextAlignmentCenter);
+  text_layer_set_font(weather_loc_layer, custom_font_weather_loc);
+  text_layer_set_background_color(weather_loc_layer, GColorClear);
+  text_layer_set_text_color(weather_loc_layer, GColorWhite);
+
+  layer_add_child(window_layer, text_layer_get_layer(weather_loc_layer));
   
-  //WEATHER ICON
-  icon_layer = bitmap_layer_create(GRect(5, 100, 60, 60));
-  layer_add_child(window_layer, bitmap_layer_get_layer(icon_layer));
 
   //TEST DUMMY Stuff
   // text_layer_set_text(bat_perc_layer, "100%");
@@ -201,6 +213,7 @@ static void init() {
    // text_layer_set_text(time_layer, "88:88");
    // text_layer_set_text(date_layer, "Sun 12:22");
   text_layer_set_text(temp_layer, "74");
+  text_layer_set_text(weather_loc_layer, "Denver, CO");
   
 
   //EVENT SUBSCRIBTIONS
@@ -217,6 +230,7 @@ static void deinit() {
   text_layer_destroy(time_layer);
   text_layer_destroy(date_layer);
   text_layer_destroy(temp_layer);
+  text_layer_destroy(weather_loc_layer);
   gbitmap_destroy(bt_bitmap);
   bitmap_layer_destroy(bt_layer);
   gbitmap_destroy(battery_bitmap);

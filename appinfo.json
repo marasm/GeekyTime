@@ -40,6 +40,11 @@
                 "type": "font"
             },
             {
+                "file": "fonts/Oblivious.ttf",
+                "name": "FONT_LOCATION_10",
+                "type": "font"
+            },
+            {
                 "file": "images/battery_100.png",
                 "name": "IMG_BATTERY_100",
                 "type": "png"
