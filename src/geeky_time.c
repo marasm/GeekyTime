@@ -174,18 +174,18 @@ static void init() {
   layer_add_child(window_layer, text_layer_get_layer(date_layer));
   
   //WEATHER ICON
-  icon_layer = bitmap_layer_create(GRect(5, 95, 60, 60));
+  icon_layer = bitmap_layer_create(GRect(5, 90, 60, 60));
   layer_add_child(window_layer, bitmap_layer_get_layer(icon_layer));
 
   //THERM
-  therm_layer = bitmap_layer_create(GRect(65, 107, 16, 36));
+  therm_layer = bitmap_layer_create(GRect(65, 102, 16, 36));
   layer_add_child(window_layer, bitmap_layer_get_layer(therm_layer));
   therm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_THERM);
   bitmap_layer_set_bitmap(therm_layer, therm_bitmap);
 
   //TEMP
   GFont custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
-  temp_layer = text_layer_create(GRect(81, 100, 144-85 /* width */, 60 /* 168 max height */));
+  temp_layer = text_layer_create(GRect(81, 95, 144-85 /* width */, 55 /* 168 max height */));
   text_layer_set_text_alignment(temp_layer, GTextAlignmentCenter);
   text_layer_set_font(temp_layer, custom_font_temp);
   text_layer_set_background_color(temp_layer, GColorClear);
@@ -195,7 +195,7 @@ static void init() {
 
   //WEATHER LOCATION
   GFont custom_font_weather_loc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LOCATION_10));
-  weather_loc_layer = text_layer_create(GRect(10, 155, 134 /* width */, 13 /* 168 max height */));
+  weather_loc_layer = text_layer_create(GRect(10, 145, 134 /* width */, 18 /* 168 max height */));
   text_layer_set_text_alignment(weather_loc_layer, GTextAlignmentCenter);
   text_layer_set_font(weather_loc_layer, custom_font_weather_loc);
   text_layer_set_background_color(weather_loc_layer, GColorClear);
