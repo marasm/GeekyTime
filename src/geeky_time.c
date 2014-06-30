@@ -141,11 +141,11 @@ static void init() {
 
   //BATTERY PERCENT
   GFont custom_font_bat_perc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BAT_PERC_10));
-  bat_perc_layer = text_layer_create(GRect(68, -3, 30, 16));
-  text_layer_set_text_alignment(bat_perc_layer, GTextAlignmentRight);
+  bat_perc_layer = text_layer_create(GRect(65, 1, 33, 15));
   text_layer_set_font(bat_perc_layer, custom_font_bat_perc);
-  text_layer_set_background_color(bat_perc_layer, GColorClear);
   text_layer_set_text_color(bat_perc_layer, GColorWhite);
+  text_layer_set_background_color(bat_perc_layer, GColorClear);
+  text_layer_set_text_alignment(bat_perc_layer, GTextAlignmentRight);
 
   layer_add_child(window_layer, text_layer_get_layer(bat_perc_layer));
 
