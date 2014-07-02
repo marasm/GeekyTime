@@ -24,6 +24,14 @@ static GBitmap *icon_bitmap = NULL;
 static GBitmap *therm_bitmap = NULL;
 
 static bool bt_connected = 1;
+static AppSync sync;
+static uint8_t sync_buffer[64];
+
+enum WeatherKey {
+  WEATHER_ICON_KEY = 0x0,         // TUPLE_INT
+  WEATHER_TEMPERATURE_KEY = 0x1,  // TUPLE_CSTRING
+  WEATHER_LOCATION_KEY = 0x2,     // TUPLE_CSTRING
+};
 
 static const uint32_t BATTERY_ICONS[] = {
   RESOURCE_ID_IMG_BATTERY_CHRG, //0
@@ -33,6 +41,49 @@ static const uint32_t BATTERY_ICONS[] = {
   RESOURCE_ID_IMG_BATTERY_80,   //4
   RESOURCE_ID_IMG_BATTERY_100,  //5
 };
+
+static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
+}
+
+static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
+  switch (key) {
+    case WEATHER_ICON_KEY:
+      if (icon_bitmap) {
+        gbitmap_destroy(icon_bitmap);
+      }
+      uint32_t icon = RESOURCE_ID_IMG_WEATHER_00;
+//TODO add the if then for all icons
+
+      icon_bitmap = gbitmap_create_with_resource(icon);
+      bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
+      break;
+
+    case WEATHER_TEMPERATURE_KEY:
+      text_layer_set_text(temp_layer, new_tuple->value->cstring);
+      break;
+
+    case WEATHER_LOCATION_KEY:
+      text_layer_set_text(weather_loc_layer, new_tuple->value->cstring);
+      break;
+  }
+}
+
+static void send_cmd(void) {
+  Tuplet value = TupletInteger(1, 1);
+
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+
+  if (iter == NULL) {
+    return;
+  }
+
+  dict_write_tuplet(iter, &value);
+  dict_write_end(iter);
+
+  app_message_outbox_send();
+}
 
 static void handle_bluetooth(bool connected) {
   if (bt_bitmap)
@@ -223,9 +274,23 @@ static void init() {
   tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
   battery_state_service_subscribe(&handle_battery);
   bluetooth_connection_service_subscribe(&handle_bluetooth);
+
+
+  //GET WEATHER FROM THE WEB
+  Tuplet initial_values[] = {
+    TupletCString(WEATHER_ICON_KEY, "00"),
+    TupletCString(WEATHER_TEMPERATURE_KEY, "--"),
+    TupletCString(WEATHER_LOCATION_KEY, "Unknown"),
+  };
+
+  app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
+      sync_tuple_changed_callback, sync_error_callback, NULL);
+
+  send_cmd();
 }
 
 static void deinit() {
+  app_sync_deinit(&sync);
   text_layer_destroy(bat_perc_layer);
   text_layer_destroy(time_layer);
   text_layer_destroy(date_layer);
