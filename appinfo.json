@@ -95,6 +95,11 @@
                 "type": "png"
             },
             {
+                "file": "images/weather_icn_01n.png",
+                "name": "IMG_WEATHER_01n",
+                "type": "png"
+            },
+            {
                 "file": "images/weather_icn_02d.png",
                 "name": "IMG_WEATHER_02d",
                 "type": "png"

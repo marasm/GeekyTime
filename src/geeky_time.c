@@ -55,7 +55,14 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       }
       uint32_t icon = RESOURCE_ID_IMG_WEATHER_00;
 //TODO add the if then for all icons
-
+      if (strcmp("01d", new_tuple->value->cstring))
+      {
+        icon = RESOURCE_ID_IMG_WEATHER_01d;
+      }
+      else if (strcmp("01n", new_tuple->value->cstring))
+      {
+        icon = RESOURCE_ID_IMG_WEATHER_01n;
+      }
       icon_bitmap = gbitmap_create_with_resource(icon);
       bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
       break;
