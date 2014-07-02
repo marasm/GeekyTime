@@ -47,6 +47,7 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 }
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Message Sync CallBack...");
   switch (key) {
     case WEATHER_ICON_KEY:
       if (icon_bitmap) {
@@ -70,6 +71,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 }
 
 static void send_cmd(void) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending sync message to phone...");
   Tuplet value = TupletInteger(1, 1);
 
   DictionaryIterator *iter;
@@ -259,12 +261,12 @@ static void init() {
   // text_layer_set_text(bat_perc_layer, "100%");
   // battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[0]);
   // bitmap_layer_set_bitmap(battery_layer, battery_bitmap);
-  icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
-  bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
-   // text_layer_set_text(time_layer, "88:88");
-   // text_layer_set_text(date_layer, "Sun 12:22");
-  text_layer_set_text(temp_layer, "74");
-  text_layer_set_text(weather_loc_layer, "Denver, CO");
+  // icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
+  // bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
+  // text_layer_set_text(time_layer, "88:88");
+  // text_layer_set_text(date_layer, "Sun 12:22");
+  // text_layer_set_text(temp_layer, "74");
+  // text_layer_set_text(weather_loc_layer, "Denver, CO");
   
 
   //EVENT SUBSCRIBTIONS

@@ -1,4 +1,5 @@
 function fetchWeather(latitude, longitude) {
+  console.log("JS About to fetch weather from web...");
   var response;
   var req = new XMLHttpRequest();
   req.open('GET', "http://api.openweathermap.org/data/2.1/find/city?" +
@@ -39,7 +40,7 @@ function locationSuccess(pos) {
 function locationError(err) {
   console.warn('location error (' + err.code + '): ' + err.message);
   Pebble.sendAppMessage({
-    "icon":"000",
+    "icon":"00",
     "location":"Unknown",
     "temperature":"--"
   });
@@ -64,10 +65,10 @@ Pebble.addEventListener("appmessage",
                         });
 
 Pebble.addEventListener("webviewclosed",
-                                     function(e) {
-                                     console.log("webview closed");
-                                     console.log(e.type);
-                                     console.log(e.response);
-                                     });
+                         function(e) {
+                         console.log("webview closed");
+                         console.log(e.type);
+                         console.log(e.response);
+                         });
 
 
