@@ -8,6 +8,11 @@
     "capabilities": [
         "configurable"
     ],
+    "appKeys": {
+    "icon": 0,
+    "temperature": 1,
+    "location": 2
+    },
     "watchapp": {
         "watchface": true
     },
@@ -102,6 +107,81 @@
             {
                 "file": "images/weather_icn_02d.png",
                 "name": "IMG_WEATHER_02d",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_02n.png",
+                "name": "IMG_WEATHER_02n",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_03d.png",
+                "name": "IMG_WEATHER_03d",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_03n.png",
+                "name": "IMG_WEATHER_03n",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_04d.png",
+                "name": "IMG_WEATHER_04d",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_04n.png",
+                "name": "IMG_WEATHER_04n",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_09d.png",
+                "name": "IMG_WEATHER_09d",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_09n.png",
+                "name": "IMG_WEATHER_09n",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_10d.png",
+                "name": "IMG_WEATHER_10d",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_10n.png",
+                "name": "IMG_WEATHER_10n",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_11d.png",
+                "name": "IMG_WEATHER_11d",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_11n.png",
+                "name": "IMG_WEATHER_11n",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_13d.png",
+                "name": "IMG_WEATHER_13d",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_13n.png",
+                "name": "IMG_WEATHER_13n",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_50d.png",
+                "name": "IMG_WEATHER_50d",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_50n.png",
+                "name": "IMG_WEATHER_50n",
                 "type": "png"
             },
             {

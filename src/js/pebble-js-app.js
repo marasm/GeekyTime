@@ -1,3 +1,12 @@
+function sendToWatchSuccess(e)
+{
+  console.log("Message sent to watch successfully!");
+}
+function sendToWatchFail(e)
+{
+  console.log("Message sending failed: " + e.error.message);
+}
+
 function fetchWeather(latitude, longitude) {
   console.log("JS About to fetch weather from web...");
   var response;
@@ -9,19 +18,23 @@ function fetchWeather(latitude, longitude) {
       if(req.status == 200) {
         console.log(req.responseText);
         response = JSON.parse(req.responseText);
-        var temperature, icon, location;
+        var temperature,temperatureC,temperatureF, icon, location;
         if (response && response.list && response.list.length > 0) {
           var weatherResult = response.list[0];
-          temperature = Math.round(weatherResult.main.temp - 273.15);
+          temperatureC = Math.round(weatherResult.main.temp - 273.15);
+          temperatureF = Math.round(temperatureC * 9 / 5 + 32);
+          //TODO assign temp based on settings
+          temperature = temperatureF;
           icon = weatherResult.weather[0].icon;
           location = weatherResult.name;
-          console.log(temperature);
-          console.log(icon);
-          console.log(location);
+          console.log('Icon=' + icon);
+          console.log('Temp C=' + temperatureC);
+          console.log('Temp F=' + temperatureF);
+          console.log('Location=' + location);
           Pebble.sendAppMessage({
             "icon":icon,
-            "temperature":temperature,
-            "location":location});
+            "temperature":temperature + "",
+            "location":location}, sendToWatchSuccess, sendToWatchFail);
         }
 
       } else {
@@ -46,7 +59,7 @@ function locationError(err) {
   });
 }
 
-var locationOptions = { "timeout": 15000, "maximumAge": 60000 }; 
+var locationOptions = { "timeout": 15000, "maximumAge": 600000 };//15s, 10 minutes 
 
 
 Pebble.addEventListener("ready",

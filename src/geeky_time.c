@@ -28,7 +28,7 @@ static AppSync sync;
 static uint8_t sync_buffer[64];
 
 enum WeatherKey {
-  WEATHER_ICON_KEY = 0x0,         // TUPLE_INT
+  WEATHER_ICON_KEY = 0x0,         // TUPLE_CSTRING
   WEATHER_TEMPERATURE_KEY = 0x1,  // TUPLE_CSTRING
   WEATHER_LOCATION_KEY = 0x2,     // TUPLE_CSTRING
 };
@@ -44,27 +44,104 @@ static const uint32_t BATTERY_ICONS[] = {
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
+  if (icon_bitmap) 
+  {
+    gbitmap_destroy(icon_bitmap);
+  }
+  icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
+  bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
+  text_layer_set_text(temp_layer, "--");
+  text_layer_set_text(weather_loc_layer, "Unknown");
 }
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Message Sync CallBack...");
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "CallBack. Key=%i", (int)key);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Callback. Tuple Value=%s", new_tuple->value->cstring);
   switch (key) {
     case WEATHER_ICON_KEY:
       if (icon_bitmap) {
         gbitmap_destroy(icon_bitmap);
       }
-      uint32_t icon = RESOURCE_ID_IMG_WEATHER_00;
 //TODO add the if then for all icons
-      if (strcmp("01d", new_tuple->value->cstring))
+      if (strcmp("01d", new_tuple->value->cstring) == 0)
       {
-        icon = RESOURCE_ID_IMG_WEATHER_01d;
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01d);
       }
-      else if (strcmp("01n", new_tuple->value->cstring))
+      else if (strcmp("01n", new_tuple->value->cstring) == 0)
       {
-        icon = RESOURCE_ID_IMG_WEATHER_01n;
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01n);
       }
-      icon_bitmap = gbitmap_create_with_resource(icon);
+      else if (strcmp("02d", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_02d);
+      }
+      else if (strcmp("02n", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_02n);
+      }
+      else if (strcmp("03d", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_03d);
+      }
+      else if (strcmp("03n", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_03n);
+      }
+      else if (strcmp("04d", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_04d);
+      }
+      else if (strcmp("04n", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_04n);
+      }
+      else if (strcmp("09d", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_09d);
+      }
+      else if (strcmp("09n", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_09n);
+      }
+      else if (strcmp("10d", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_10d);
+      }
+      else if (strcmp("10n", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_10n);
+      }
+      else if (strcmp("11d", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_11d);
+      }
+      else if (strcmp("11n", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_11n);
+      }
+      else if (strcmp("13d", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_13d);
+      }
+      else if (strcmp("13n", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_13n);
+      }
+      else if (strcmp("50d", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_50d);
+      }
+      else if (strcmp("50n", new_tuple->value->cstring) == 0)
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_50n);
+      }
+      else
+      {
+        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
+      }
+      
       bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
+      layer_mark_dirty(bitmap_layer_get_layer(icon_layer));
       break;
 
     case WEATHER_TEMPERATURE_KEY:
@@ -181,9 +258,6 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
   text_layer_set_text(time_layer, time_text);
   text_layer_set_text(date_layer, date_text);
 
-  //update the battery
-  handle_battery(battery_state_service_peek());
-  handle_bluetooth(bluetooth_connection_service_peek());
 }
 
 
@@ -280,12 +354,18 @@ static void init() {
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
   handle_minute_tick(current_time, MINUTE_UNIT);
+  handle_battery(battery_state_service_peek());
+  handle_bluetooth(bluetooth_connection_service_peek());
   tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
   battery_state_service_subscribe(&handle_battery);
   bluetooth_connection_service_subscribe(&handle_bluetooth);
 
 
   //GET WEATHER FROM THE WEB
+  const int inbound_size = 64;
+  const int outbound_size = 64;
+  app_message_open(inbound_size, outbound_size);
+
   Tuplet initial_values[] = {
     TupletCString(WEATHER_ICON_KEY, "00"),
     TupletCString(WEATHER_TEMPERATURE_KEY, "--"),
