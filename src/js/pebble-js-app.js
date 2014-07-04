@@ -80,8 +80,16 @@ Pebble.addEventListener("appmessage",
 Pebble.addEventListener("webviewclosed",
                          function(e) {
                          console.log("webview closed");
+                         var options = JSON.parse(decodeURIComponent(e.response));
+                         console.log("Options = " + JSON.stringify(options));
                          console.log(e.type);
                          console.log(e.response);
+                         });
+
+Pebble.addEventListener("showConfiguration", 
+                         function() {
+                         console.log("showing configuration");
+                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html');
                          });
 
 

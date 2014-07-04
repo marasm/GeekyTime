@@ -44,14 +44,14 @@ static const uint32_t BATTERY_ICONS[] = {
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
-  if (icon_bitmap) 
-  {
-    gbitmap_destroy(icon_bitmap);
-  }
-  icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
-  bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
-  text_layer_set_text(temp_layer, "--");
-  text_layer_set_text(weather_loc_layer, "Unknown");
+  // if (icon_bitmap) 
+  // {
+  //   gbitmap_destroy(icon_bitmap);
+  // }
+  // icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
+  // bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
+  // text_layer_set_text(temp_layer, "--");
+  // text_layer_set_text(weather_loc_layer, "Unknown");
 }
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
@@ -62,7 +62,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       if (icon_bitmap) {
         gbitmap_destroy(icon_bitmap);
       }
-//TODO add the if then for all icons
       if (strcmp("01d", new_tuple->value->cstring) == 0)
       {
         icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01d);
