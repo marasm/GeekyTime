@@ -1,8 +1,3 @@
-/*
-
-   How to use a custom non-system font.
-
- */
 
 #include "pebble.h"
 
@@ -259,6 +254,12 @@ static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
 
 }
 
+static void handle_hour_tick(struct tm* tick_time, TimeUnits units_changed) {
+  //do hourly things here like pull weather info
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Hourly refresh");
+  send_cmd();
+}
+
 
 static void init() {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Entering Init");
@@ -356,6 +357,7 @@ static void init() {
   handle_battery(battery_state_service_peek());
   handle_bluetooth(bluetooth_connection_service_peek());
   tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
+  tick_timer_service_subscribe(HOUR_UNIT, &handle_hour_tick);
   battery_state_service_subscribe(&handle_battery);
   bluetooth_connection_service_subscribe(&handle_bluetooth);
 
@@ -373,8 +375,8 @@ static void init() {
 
   app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
       sync_tuple_changed_callback, sync_error_callback, NULL);
-
-  send_cmd();
+  //Make sure that the weather is refreshed at least hourly
+  handle_hour_tick(current_time, HOUR_UNIT);
 }
 
 static void deinit() {

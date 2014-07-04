@@ -11,31 +11,38 @@ function fetchWeather(latitude, longitude) {
   console.log("JS About to fetch weather from web...");
   var response;
   var req = new XMLHttpRequest();
-  req.open('GET', "http://api.openweathermap.org/data/2.1/find/city?" +
-    "lat=" + latitude + "&lon=" + longitude + "&cnt=1", true);
+  req.open('GET', "http://api.openweathermap.org/data/2.5/weather?" +
+    "lat=" + latitude + "&lon=" + longitude, true);
   req.onload = function(e) {
     if (req.readyState == 4) {
       if(req.status == 200) {
         console.log(req.responseText);
         response = JSON.parse(req.responseText);
-        var temperature,temperatureC,temperatureF, icon, location;
-        if (response && response.list && response.list.length > 0) {
-          var weatherResult = response.list[0];
-          temperatureC = Math.round(weatherResult.main.temp - 273.15);
+        var temperature = '--';
+        var temperatureC,temperatureF;
+        var icon = '00'; 
+        var location = 'Unknown';
+        if (response && response.weather && response.weather.length > 0) {
+          var weatherResult = response.weather[0];
+          icon = weatherResult.icon;
+        }  
+        if (response && response.main ) {
+          temperatureC = Math.round(response.main.temp - 273.15);
           temperatureF = Math.round(temperatureC * 9 / 5 + 32);
           //TODO assign temp based on settings
           temperature = temperatureF;
-          icon = weatherResult.weather[0].icon;
-          location = weatherResult.name;
-          console.log('Icon=' + icon);
-          console.log('Temp C=' + temperatureC);
-          console.log('Temp F=' + temperatureF);
-          console.log('Location=' + location);
-          Pebble.sendAppMessage({
-            "icon":icon,
-            "temperature":temperature + "",
-            "location":location}, sendToWatchSuccess, sendToWatchFail);
         }
+        if (response && response.name ) {
+          location = response.name;
+        }
+        console.log('Icon=' + icon);
+        console.log('Temp C=' + temperatureC);
+        console.log('Temp F=' + temperatureF);
+        console.log('Location=' + location);
+        Pebble.sendAppMessage({
+          "icon":icon,
+          "temperature":temperature + "",
+          "location":location}, sendToWatchSuccess, sendToWatchFail);
 
       } else {
         console.log("Error");
