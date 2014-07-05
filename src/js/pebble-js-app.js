@@ -19,7 +19,8 @@ function fetchWeather(latitude, longitude) {
         console.log(req.responseText);
         response = JSON.parse(req.responseText);
         var temperature = '--';
-        var temperatureC,temperatureF;
+        var temperatureC = '--';
+        var temperatureF = '--';
         var icon = '00'; 
         var location = 'Unknown';
         if (response && response.weather && response.weather.length > 0) {
