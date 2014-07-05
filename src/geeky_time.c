@@ -357,7 +357,7 @@ static void init() {
   handle_battery(battery_state_service_peek());
   handle_bluetooth(bluetooth_connection_service_peek());
   tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
-  tick_timer_service_subscribe(HOUR_UNIT, &handle_hour_tick);
+  // tick_timer_service_subscribe(HOUR_UNIT, &handle_hour_tick);
   battery_state_service_subscribe(&handle_battery);
   bluetooth_connection_service_subscribe(&handle_bluetooth);
 
