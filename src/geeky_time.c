@@ -232,32 +232,35 @@ static void handle_battery(BatteryChargeState charge_state) {
   layer_mark_dirty(bitmap_layer_get_layer(battery_layer));
 }
 
-static void handle_minute_tick(struct tm* tick_time, TimeUnits units_changed) {
+static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
 
-  static char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
-  static char date_text[] = "Sun 01/01"; // Needs to be static because it's used by the system later.
-  char *time_format;
-  time_format = "%I:%M";
-  if (clock_is_24h_style())
-  {
-    time_format = "%R";
+  if(units_changed & MINUTE_UNIT) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Minute tick");
+    static char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
+    static char date_text[] = "Sun 01/01"; // Needs to be static because it's used by the system later.
+    char *time_format;
+    time_format = "%I:%M";
+    if (clock_is_24h_style())
+    {
+      time_format = "%R";
+    }
+
+    strftime(time_text, sizeof(time_text), time_format, tick_time);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Current time: %s", time_text);
+
+    strftime(date_text, sizeof(date_text), "%a %m-%d", tick_time);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Current date: %s", date_text);
+
+    text_layer_set_text(time_layer, time_text);
+    text_layer_set_text(date_layer, date_text);
+    
+  }
+  if(units_changed & HOUR_UNIT) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Hour tick");
+    send_cmd();
+    
   }
 
-  strftime(time_text, sizeof(time_text), time_format, tick_time);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Current time: %s", time_text);
-
-  strftime(date_text, sizeof(date_text), "%a %m-%d", tick_time);
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Current date: %s", date_text);
-
-  text_layer_set_text(time_layer, time_text);
-  text_layer_set_text(date_layer, date_text);
-
-}
-
-static void handle_hour_tick(struct tm* tick_time, TimeUnits units_changed) {
-  //do hourly things here like pull weather info
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Hourly refresh");
-  send_cmd();
 }
 
 
@@ -353,11 +356,10 @@ static void init() {
   //EVENT SUBSCRIBTIONS
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
-  handle_minute_tick(current_time, MINUTE_UNIT);
+  handle_time_tick(current_time, MINUTE_UNIT);
   handle_battery(battery_state_service_peek());
   handle_bluetooth(bluetooth_connection_service_peek());
-  tick_timer_service_subscribe(MINUTE_UNIT, &handle_minute_tick);
-  tick_timer_service_subscribe(HOUR_UNIT, &handle_hour_tick);
+  tick_timer_service_subscribe(MINUTE_UNIT|HOUR_UNIT, &handle_time_tick);
   battery_state_service_subscribe(&handle_battery);
   bluetooth_connection_service_subscribe(&handle_bluetooth);
 
@@ -376,7 +378,7 @@ static void init() {
   app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
       sync_tuple_changed_callback, sync_error_callback, NULL);
   //Make sure that the weather is refreshed at least hourly
-  handle_hour_tick(current_time, HOUR_UNIT);
+  handle_time_tick(current_time, HOUR_UNIT);
 }
 
 static void deinit() {
