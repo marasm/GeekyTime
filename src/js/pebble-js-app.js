@@ -27,7 +27,9 @@ function fetchWeather(latitude, longitude) {
           var weatherResult = response.weather[0];
           icon = weatherResult.icon;
         }  
-        if (response && response.main ) {
+        if (response && response.main && response.main.temp != null 
+            && response.main.temp != 'undefined' && response.main.temp != ''
+            && !isNaN(response.main.temp)) {
           temperatureC = Math.round(response.main.temp - 273.15);
           temperatureF = Math.round(temperatureC * 9 / 5 + 32);
           //TODO assign temp based on settings
@@ -37,9 +39,11 @@ function fetchWeather(latitude, longitude) {
           location = response.name;
         }
         console.log('Icon=' + icon);
+        console.log('Temp=' + temperature);
         console.log('Temp C=' + temperatureC);
         console.log('Temp F=' + temperatureF);
         console.log('Location=' + location);
+
         Pebble.sendAppMessage({
           "icon":icon,
           "temperature":temperature + "",
