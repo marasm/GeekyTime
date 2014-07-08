@@ -41,6 +41,11 @@
             },
             {
                 "file": "fonts/Oblivious.ttf",
+                "name": "FONT_TEMP_30",
+                "type": "font"
+            },
+            {
+                "file": "fonts/Oblivious.ttf",
                 "name": "FONT_TEMP_40",
                 "type": "font"
             },

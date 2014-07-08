@@ -52,6 +52,7 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "CallBack. Key=%i", (int)key);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Callback. Tuple Value=%s", new_tuple->value->cstring);
+  GFont custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
   switch (key) {
     case WEATHER_ICON_KEY:
       if (icon_bitmap) {
@@ -139,6 +140,12 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       break;
 
     case WEATHER_TEMPERATURE_KEY:
+      if (strlen(new_tuple->value->cstring) > 2)
+      {
+        custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
+        text_layer_set_font(temp_layer, custom_font_temp);
+      }
+      text_layer_set_font(temp_layer, custom_font_temp);
       text_layer_set_text(temp_layer, new_tuple->value->cstring);
       break;
 
@@ -321,10 +328,10 @@ static void init() {
   bitmap_layer_set_bitmap(therm_layer, therm_bitmap);
 
   //TEMP
-  GFont custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
   temp_layer = text_layer_create(GRect(81, 95, 144-85 /* width */, 55 /* 168 max height */));
-  text_layer_set_text_alignment(temp_layer, GTextAlignmentCenter);
+  GFont custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
   text_layer_set_font(temp_layer, custom_font_temp);
+  text_layer_set_text_alignment(temp_layer, GTextAlignmentCenter);
   text_layer_set_background_color(temp_layer, GColorClear);
   text_layer_set_text_color(temp_layer, GColorWhite);
 
@@ -375,7 +382,8 @@ static void init() {
     TupletCString(WEATHER_LOCATION_KEY, "Unknown"),
   };
 
-  app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, ARRAY_LENGTH(initial_values),
+  app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, 
+      ARRAY_LENGTH(initial_values),
       sync_tuple_changed_callback, sync_error_callback, NULL);
   //Make sure that the weather is refreshed at least hourly
   handle_time_tick(current_time, HOUR_UNIT);
