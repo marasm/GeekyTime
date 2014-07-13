@@ -140,6 +140,10 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       break;
 
     case WEATHER_TEMPERATURE_KEY:
+      if (strlen(new_tuple->value->cstring) == 0)
+      {
+        break;
+      }
       if (strlen(new_tuple->value->cstring) > 2)
       {
         custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
