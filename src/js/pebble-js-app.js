@@ -33,7 +33,7 @@ function fetchWeather(latitude, longitude) {
         if (response && response.main && response.main.temp != null 
             && response.main.temp != 'undefined' && response.main.temp != ''
             && !isNaN(response.main.temp)) {
-          temperatureC = Math.round(response.main.temp - 273.15);
+          temperatureC = Math.round(response.main.temp - 273.15 + 4.15);//4.15 Correction for service temp being too low
           temperatureF = Math.round(temperatureC * 9 / 5 + 32);
           //assign temp based on settings
           if (tempScale == 'C')
