@@ -37,6 +37,36 @@ static const uint32_t BATTERY_ICONS[] = {
   RESOURCE_ID_IMG_BATTERY_100,  //5
 };
 
+
+static bool is_valid_temp(const char * st) 
+{
+  int len = strlen(st);
+  int ascii_code;
+  int negative_count = -1;
+
+  for (int i = 0; i < len; i++) {
+    ascii_code = (int)st[i];
+    switch (ascii_code) 
+    {
+
+      case 45: // Allow a negative sign.
+          negative_count++;
+          if (negative_count || i != 0) {
+              return false;
+          }
+          break;
+
+      default:
+          if (ascii_code < 48 || ascii_code > 57) {
+              return false;
+          }
+          break;
+    }
+  }
+  return true;
+}
+
+
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
   // if (icon_bitmap) 
@@ -140,17 +170,21 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       break;
 
     case WEATHER_TEMPERATURE_KEY:
-      if (strlen(new_tuple->value->cstring) == 0)
+      if (is_valid_temp(new_tuple->value->cstring))
       {
-        break;
-      }
-      if (strlen(new_tuple->value->cstring) > 2)
-      {
-        custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
+        if (strlen(new_tuple->value->cstring) > 2)
+        {
+          custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
+          text_layer_set_font(temp_layer, custom_font_temp);
+        }
         text_layer_set_font(temp_layer, custom_font_temp);
+        text_layer_set_text(temp_layer, new_tuple->value->cstring);
       }
-      text_layer_set_font(temp_layer, custom_font_temp);
-      text_layer_set_text(temp_layer, new_tuple->value->cstring);
+      else
+      {
+        text_layer_set_font(temp_layer, custom_font_temp);
+        text_layer_set_text(temp_layer, "--");
+      }
       break;
 
     case WEATHER_LOCATION_KEY:

@@ -91,7 +91,7 @@ function initConfigOptions()
   }
 }
 
-function storeConfigOptions(inOptions)
+function applyAndStoreConfigOptions(inOptions)
 {
   if (inOptions != null && inOptions != 'undefined')
   {
@@ -131,7 +131,7 @@ Pebble.addEventListener("webviewclosed",
                          console.log("webview closed");
                          var options = JSON.parse(decodeURIComponent(e.response));
                          console.log("Options = " + JSON.stringify(options));
-                         storeConfigOptions(options);
+                         applyAndStoreConfigOptions(options);
                          window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                          });
 
