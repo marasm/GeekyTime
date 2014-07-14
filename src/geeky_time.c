@@ -210,6 +210,13 @@ static void send_cmd(void) {
   app_message_outbox_send();
 }
 
+static void handle_tap(AccelAxisType axis, int32_t direction)
+{
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=%i", axis);
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "tap direction=%i", (int)direction);
+  send_cmd();
+}
+
 static void handle_bluetooth(bool connected) {
   if (bt_bitmap)
   {
@@ -407,6 +414,7 @@ static void init() {
   tick_timer_service_subscribe(MINUTE_UNIT|HOUR_UNIT, &handle_time_tick);
   battery_state_service_subscribe(&handle_battery);
   bluetooth_connection_service_subscribe(&handle_bluetooth);
+  accel_tap_service_subscribe(&handle_tap);
 
 
   //GET WEATHER FROM THE WEB
@@ -417,7 +425,7 @@ static void init() {
   Tuplet initial_values[] = {
     TupletCString(WEATHER_ICON_KEY, "00"),
     TupletCString(WEATHER_TEMPERATURE_KEY, "--"),
-    TupletCString(WEATHER_LOCATION_KEY, "Unknown"),
+    TupletCString(WEATHER_LOCATION_KEY, "Unknown")
   };
 
   app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, 
@@ -429,6 +437,10 @@ static void init() {
 
 static void deinit() {
   app_sync_deinit(&sync);
+  tick_timer_service_unsubscribe();
+  battery_state_service_unsubscribe();
+  bluetooth_connection_service_unsubscribe();
+  accel_tap_service_unsubscribe();
   text_layer_destroy(bat_perc_layer);
   text_layer_destroy(time_layer);
   text_layer_destroy(date_layer);
