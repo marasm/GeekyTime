@@ -76,8 +76,8 @@ function locationError(err) {
   console.warn('location error (' + err.code + '): ' + err.message);
   Pebble.sendAppMessage({
     "icon":"00",
-    "location":"Unknown",
-    "temperature":"--"
+    "temperature":"--",
+    "location":"Unknown"
   });
 }
 
@@ -122,8 +122,6 @@ Pebble.addEventListener("appmessage",
                         function(e) {
                           window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                           console.log(e.type);
-                          console.log(e.payload.temperature);
-                          console.log("message!");
                         });
 
 Pebble.addEventListener("webviewclosed",
