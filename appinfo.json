@@ -95,6 +95,21 @@
                 "type": "png"
             },
             {
+                "file": "images/comm_on.png",
+                "name": "IMG_COMM_ON",
+                "type": "png"
+            },
+            {
+                "file": "images/comm_off.png",
+                "name": "IMG_COMM_OFF",
+                "type": "png"
+            },
+            {
+                "file": "images/comm_err.png",
+                "name": "IMG_COMM_ERR",
+                "type": "png"
+            },
+            {
                 "file": "images/weather_icn_00.png",
                 "name": "IMG_WEATHER_00",
                 "type": "png"
