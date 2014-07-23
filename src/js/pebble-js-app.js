@@ -1,5 +1,6 @@
 var initDone = false;
 var tempScale = 'F';
+var tempCorrect = 0;
 
 function sendToWatchSuccess(e)
 {
@@ -33,7 +34,7 @@ function fetchWeather(latitude, longitude) {
         if (response && response.main && response.main.temp != null 
             && response.main.temp != 'undefined' && response.main.temp != ''
             && !isNaN(response.main.temp)) {
-          temperatureC = Math.round(response.main.temp - 273.15 + 4.15);//4.15 Correction for service temp being too low
+          temperatureC = Math.round(response.main.temp - 273.15 + tempCorrect);
           temperatureF = Math.round(temperatureC * 9 / 5 + 32);
           //assign temp based on settings
           if (tempScale == 'C')
@@ -89,6 +90,17 @@ function initConfigOptions()
     tempScale = tempScaleLS;
     console.log("Assigned tempScale from storage=" + tempScaleLS);
   }
+  var tempCorrectLS = localStorage.getItem('tempCorrect');
+  if (tempCorrectLS != null && tempCorrectLS != 'undefined' && !isNaN(tempCorrectLS))
+  {
+    tempCorrect = tempCorrectLS;
+    console.log("Assigned tempCorrect from storage=" + tempCorrectLS);
+  }
+  else
+  {
+    tempCorrect = 0;
+    console.log("Assigned default tempCorrect=0");
+  }
 }
 
 function applyAndStoreConfigOptions(inOptions)
@@ -99,6 +111,9 @@ function applyAndStoreConfigOptions(inOptions)
     {
       localStorage.setItem('tempScale', inOptions.tempScale);
       tempScale = inOptions.tempScale;
+
+      localStorage.setItem('tempCorrect', inOptions.tempCorrect);
+      tempCorrect = inOptions.tempCorrect;
     }
   }
 }
