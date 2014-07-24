@@ -34,7 +34,11 @@ function fetchWeather(latitude, longitude) {
         if (response && response.main && response.main.temp != null 
             && response.main.temp != 'undefined' && response.main.temp != ''
             && !isNaN(response.main.temp)) {
-          temperatureC = Math.round(response.main.temp - 273.15 + tempCorrect);
+          temperatureC = Math.round(response.main.temp - 273.15);
+          console.log('temp C before correction=' + temperatureC);
+          console.log('temp Correction=' + tempCorrect);
+          temperatureC = temperatureC + tempCorrect;
+          console.log('temp C after correction=' + temperatureC);
           temperatureF = Math.round(temperatureC * 9 / 5 + 32);
           //assign temp based on settings
           if (tempScale == 'C')
@@ -93,7 +97,7 @@ function initConfigOptions()
   var tempCorrectLS = localStorage.getItem('tempCorrect');
   if (tempCorrectLS != null && tempCorrectLS != 'undefined' && !isNaN(tempCorrectLS))
   {
-    tempCorrect = tempCorrectLS;
+    tempCorrect = parseFloat(tempCorrectLS);
     console.log("Assigned tempCorrect from storage=" + tempCorrectLS);
   }
   else
@@ -111,9 +115,11 @@ function applyAndStoreConfigOptions(inOptions)
     {
       localStorage.setItem('tempScale', inOptions.tempScale);
       tempScale = inOptions.tempScale;
-
+    }
+    if (inOptions.tempCorrect != null && !isNaN(inOptions.tempCorrect))
+    {
       localStorage.setItem('tempCorrect', inOptions.tempCorrect);
-      tempCorrect = inOptions.tempCorrect;
+      tempCorrect = parseFloat(inOptions.tempCorrect);
     }
   }
 }
