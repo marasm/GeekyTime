@@ -9,4 +9,4 @@ Included:
  - Battery state with percentage
  - Vibrate on phone connect/disconnect
  - Tap to refresh weather
- - Tempreture correction for cases when the temprature from the internet is consistently higher/lower than the actual temprature in the area. 
+ - Temperature correction for cases when the temperature from the internet is consistently higher/lower than the actual temperature in the area. 
