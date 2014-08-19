@@ -23,11 +23,13 @@ static GBitmap *therm_bitmap = NULL;
 static bool bt_connected = 1;
 static AppSync sync;
 static uint8_t sync_buffer[64];
+static bool bt_vibrate = 1;
 
-enum WeatherKey {
+enum TupleKey {
   WEATHER_ICON_KEY = 0x0,         // TUPLE_CSTRING
   WEATHER_TEMPERATURE_KEY = 0x1,  // TUPLE_CSTRING
   WEATHER_LOCATION_KEY = 0x2,     // TUPLE_CSTRING
+  CONFIG_BT_VIBRATE = 0x100       // TUPLE_CSTRING
 };
 
 static const uint32_t BATTERY_ICONS[] = {
@@ -201,6 +203,16 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
       layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
       break;
+    case CONFIG_BT_VIBRATE:
+      if (strcmp(new_tuple->value->cstring, "On") == 0)
+      {
+        bt_vibrate = 1;
+      }
+      else
+      {
+        bt_vibrate = 0;
+      }
+      break;
   }
 }
 
@@ -259,8 +271,11 @@ static void handle_bluetooth(bool connected) {
     bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_BT_ON);
     if (!bt_connected)
     {
-      vibes_double_pulse();
       bt_connected = 1;
+      if (bt_vibrate)
+      {
+        vibes_double_pulse();
+      }
     }
   }
   else
@@ -269,7 +284,10 @@ static void handle_bluetooth(bool connected) {
     if (bt_connected)
     {
       bt_connected = 0;
-      vibes_long_pulse();
+      if (bt_vibrate)
+      {
+        vibes_long_pulse();
+      }
     }
   }
   APP_LOG(APP_LOG_LEVEL_DEBUG, "handle_bluetooth connected=%i", connected);
@@ -461,10 +479,21 @@ static void init() {
   const int outbound_size = 128;
   app_message_open(inbound_size, outbound_size);
 
+  char *bt_vibrate_str;
+  if (bt_vibrate)
+  {
+    bt_vibrate_str = "On";
+  }
+  else
+  {
+    bt_vibrate_str = "Off";
+  }
+
   Tuplet initial_values[] = {
     TupletCString(WEATHER_ICON_KEY, "00"),
     TupletCString(WEATHER_TEMPERATURE_KEY, "--"),
-    TupletCString(WEATHER_LOCATION_KEY, "Unknown")
+    TupletCString(WEATHER_LOCATION_KEY, "Unknown"),
+    TupletCString(CONFIG_BT_VIBRATE, bt_vibrate_str)
   };
 
   app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, 

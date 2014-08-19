@@ -1,6 +1,7 @@
 var initDone = false;
 var tempScale = 'F';
 var tempCorrect = 0;
+var btVibrate = 'On';
 
 function sendToWatchSuccess(e)
 {
@@ -105,12 +106,19 @@ function initConfigOptions()
     tempCorrect = 0;
     console.log("Assigned default tempCorrect=0");
   }
+  var btVibrateLS = localStorage.getItem('btVibrate');
+  if (btVibrateLS != null && btVibrateLS != 'undefined' && btVibrateLS.length > 0)
+  {
+    btVibrate = btVibrateLS;
+    console.log("Assigned btVibrate from storage=" + btVibrateLS);
+  }
 }
 
 function applyAndStoreConfigOptions(inOptions)
 {
   if (inOptions != null && inOptions != 'undefined')
   {
+    //these 2 options are for the JS running on the phone
     if (inOptions.tempScale != null && inOptions.tempScale.length == 1)
     {
       localStorage.setItem('tempScale', inOptions.tempScale);
@@ -120,6 +128,17 @@ function applyAndStoreConfigOptions(inOptions)
     {
       localStorage.setItem('tempCorrect', inOptions.tempCorrect);
       tempCorrect = parseFloat(inOptions.tempCorrect);
+    }
+
+    //this option is applicable to watch app only so store and send to watch
+    if (inOptions.btVibrate != null && inOptions.btVibrate.length > 0)
+    {
+      localStorage.setItem('btVibrate', inOptions.btVibrate);
+      btVibrate = inOptions.btVibrate;
+      console.log('Sending btVibrate=' + btVibrate + " to the watch");
+      Pebble.sendAppMessage({
+        "btVibrate" : btVibrate
+      });
     }
   }
 }
@@ -158,7 +177,7 @@ Pebble.addEventListener("showConfiguration",
                          function() {
                          console.log("showing configuration");
                          initConfigOptions();
-                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect);
+                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate' + btVibrate);
                          });
 
 

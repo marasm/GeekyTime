@@ -11,7 +11,8 @@
     "appKeys": {
     "icon": 0,
     "temperature": 1,
-    "location": 2
+    "location": 2,
+    "btVibrate" : 100
     },
     "watchapp": {
         "watchface": true
