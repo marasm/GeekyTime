@@ -29,7 +29,7 @@ enum TupleKey {
   WEATHER_ICON_KEY = 0x0,         // TUPLE_CSTRING
   WEATHER_TEMPERATURE_KEY = 0x1,  // TUPLE_CSTRING
   WEATHER_LOCATION_KEY = 0x2,     // TUPLE_CSTRING
-  CONFIG_BT_VIBRATE = 0x100       // TUPLE_CSTRING
+  CONFIG_BT_VIBRATE = 0x64        // TUPLE_CSTRING (100 in decimal)
 };
 
 static const uint32_t BATTERY_ICONS[] = {
@@ -206,10 +206,12 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
     case CONFIG_BT_VIBRATE:
       if (strcmp(new_tuple->value->cstring, "On") == 0)
       {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting BT Vibrate to On");
         bt_vibrate = 1;
       }
       else
       {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting BT Vibrate to Off");
         bt_vibrate = 0;
       }
       break;

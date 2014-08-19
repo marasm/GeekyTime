@@ -177,7 +177,7 @@ Pebble.addEventListener("showConfiguration",
                          function() {
                          console.log("showing configuration");
                          initConfigOptions();
-                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate' + btVibrate);
+                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate);
                          });
 
 
