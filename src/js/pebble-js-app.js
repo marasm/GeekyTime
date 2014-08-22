@@ -80,10 +80,23 @@ function locationSuccess(pos) {
 
 function locationError(err) {
   console.warn('location error (' + err.code + '): ' + err.message);
+  var errCode = 'UN';
+  switch (err.code)
+  {
+    case err.TIMEOUT:
+      errCode = 'TO';
+      break;
+    case err.POSITION_UNAVAILABLE:
+      errCode = 'GE';
+      break;
+    case err.PERMISSION_DENIED:
+      errCode = 'PD';
+      break;
+  }
   Pebble.sendAppMessage({
     "icon":"00",
     "temperature":"--",
-    "location":"Unknown"
+    "location":"LocErr: " + errCode;
   });
 }
 
@@ -143,7 +156,7 @@ function applyAndStoreConfigOptions(inOptions)
   }
 }
 
-var locationOptions = { "timeout": 15000, "maximumAge": 600000 };//15s, 10 minutes 
+var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minutes 
 
 
 Pebble.addEventListener("ready",
@@ -152,8 +165,8 @@ Pebble.addEventListener("ready",
                           if (!initDone)
                           {
                             console.log("JS - performing init tasks" + e.ready);
-                            locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
                             initConfigOptions();
+                            locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
                             initDone = true;
                           }
                         });
