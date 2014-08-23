@@ -96,7 +96,7 @@ function locationError(err) {
   Pebble.sendAppMessage({
     "icon":"00",
     "temperature":"--",
-    "location":"LocErr: " + errCode;
+    "location":"LocErr: " + errCode
   });
 }
 
