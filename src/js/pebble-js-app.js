@@ -65,8 +65,10 @@ function fetchWeather(latitude, longitude) {
           "temperature":temperature + "",
           "location":location}, sendToWatchSuccess, sendToWatchFail);
 
-      } else {
-        console.log("Error");
+      } 
+      else 
+      {
+        console.log("HTTP Error = " + req.status);
       }
     }
   }

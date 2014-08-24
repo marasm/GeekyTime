@@ -72,7 +72,56 @@ static bool is_valid_temp(const char * st)
 
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
+  char *error_desc;
+  switch (app_message_error) {
+    case APP_MSG_OK: 
+      error_desc = "APP_MSG_OK";
+      break;
+    case APP_MSG_SEND_TIMEOUT: 
+      error_desc =  "APP_MSG_SEND_TIMEOUT";
+      break;
+    case APP_MSG_SEND_REJECTED: 
+      error_desc =  "APP_MSG_SEND_REJECTED";
+      break;
+    case APP_MSG_NOT_CONNECTED: 
+      error_desc =  "APP_MSG_NOT_CONNECTED";
+      break;
+    case APP_MSG_APP_NOT_RUNNING: 
+      error_desc =  "APP_MSG_APP_NOT_RUNNING";
+      break;
+    case APP_MSG_INVALID_ARGS: 
+      error_desc =  "APP_MSG_INVALID_ARGS";
+      break;
+    case APP_MSG_BUSY: 
+      error_desc =  "APP_MSG_BUSY";
+      break;
+    case APP_MSG_BUFFER_OVERFLOW: 
+      error_desc =  "APP_MSG_BUFFER_OVERFLOW";
+      break;
+    case APP_MSG_ALREADY_RELEASED: 
+      error_desc =  "APP_MSG_ALREADY_RELEASED";
+      break;
+    case APP_MSG_CALLBACK_ALREADY_REGISTERED: 
+      error_desc =  "APP_MSG_CALLBACK_ALREADY_REGISTERED";
+      break;
+    case APP_MSG_CALLBACK_NOT_REGISTERED: 
+      error_desc =  "APP_MSG_CALLBACK_NOT_REGISTERED";
+      break;
+    case APP_MSG_OUT_OF_MEMORY: 
+      error_desc =  "APP_MSG_OUT_OF_MEMORY";
+      break;
+    case APP_MSG_CLOSED: 
+      error_desc =  "APP_MSG_CLOSED";
+      break;
+    case APP_MSG_INTERNAL_ERROR: 
+      error_desc =  "APP_MSG_INTERNAL_ERROR";
+      break;
+    default: 
+      error_desc =  "UNKNOWN ERROR";
+      break;
+  }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %s", error_desc);
+  
   if (comm_bitmap)
   {
     gbitmap_destroy(comm_bitmap);
