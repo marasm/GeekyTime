@@ -38,7 +38,7 @@ function fetchWeather(latitude, longitude) {
           temperatureC = Math.round(response.main.temp - 273.15);
           console.log('temp C before correction=' + temperatureC);
           console.log('temp Correction=' + tempCorrect);
-          temperatureC = temperatureC + tempCorrect;
+          temperatureC = Math.round(temperatureC + tempCorrect);
           console.log('temp C after correction=' + temperatureC);
           temperatureF = Math.round(temperatureC * 9 / 5 + 32);
           //assign temp based on settings
