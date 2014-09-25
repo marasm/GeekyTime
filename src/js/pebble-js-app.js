@@ -35,7 +35,7 @@ function fetchWeather(latitude, longitude) {
         if (response && response.main && response.main.temp != null 
             && response.main.temp != 'undefined' && response.main.temp != ''
             && !isNaN(response.main.temp)) {
-          temperatureC = Math.round(response.main.temp - 273.15);
+          temperatureC = response.main.temp - 273.15;
           console.log('temp C before correction=' + temperatureC);
           console.log('temp Correction=' + tempCorrect);
           temperatureC = Math.round(temperatureC + tempCorrect);
@@ -62,7 +62,7 @@ function fetchWeather(latitude, longitude) {
 
         Pebble.sendAppMessage({
           "icon":icon,
-          "temperature":temperature + "",
+          "temperature":temperature.toString(),
           "location":location}, sendToWatchSuccess, sendToWatchFail);
 
       } else {
