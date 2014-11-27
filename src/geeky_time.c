@@ -20,6 +20,9 @@ static GBitmap *battery_bitmap = NULL;
 static GBitmap *icon_bitmap = NULL;
 static GBitmap *therm_bitmap = NULL;
 
+static GFont custom_font_temp_30;
+static GFont custom_font_temp_40;
+
 static bool bt_connected = 1;
 static AppSync sync;
 static uint8_t sync_buffer[64];
@@ -226,17 +229,20 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       {
         if (strlen(new_tuple->value->cstring) > 2)
         {
-          text_layer_set_font(temp_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30)));
+          APP_LOG(APP_LOG_LEVEL_DEBUG, "3 digit temp detected. Setting font to 30");
+          text_layer_set_font(temp_layer, custom_font_temp_30);
         }
         else
         {
-          text_layer_set_font(temp_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40)));
+          APP_LOG(APP_LOG_LEVEL_DEBUG, "2 digit temp detected. Setting font to 40");
+          text_layer_set_font(temp_layer, custom_font_temp_40);
         }
         text_layer_set_text(temp_layer, new_tuple->value->cstring);
       }
       else
       {
-        text_layer_set_font(temp_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40)));
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected. Setting font to 40 and value to --");
+        text_layer_set_font(temp_layer, custom_font_temp_40);
         text_layer_set_text(temp_layer, "--");
       }
       break;
@@ -302,6 +308,7 @@ static void handle_tap(AccelAxisType axis, int32_t direction)
       break;
     case ACCEL_AXIS_Y:
       APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=Y");
+      send_cmd();
       break;
     case ACCEL_AXIS_Z:
       APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=Z");
@@ -479,9 +486,11 @@ static void init() {
   bitmap_layer_set_bitmap(therm_layer, therm_bitmap);
 
   //TEMP
+  custom_font_temp_30 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
+  custom_font_temp_40 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
+  
   temp_layer = text_layer_create(GRect(81, 95, 144-85 /* width */, 55 /* 168 max height */));
-  GFont custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
-  text_layer_set_font(temp_layer, custom_font_temp);
+  text_layer_set_font(temp_layer, custom_font_temp_40);
   text_layer_set_text_alignment(temp_layer, GTextAlignmentCenter);
   text_layer_set_background_color(temp_layer, GColorClear);
   text_layer_set_text_color(temp_layer, GColorWhite);
