@@ -308,7 +308,6 @@ static void handle_tap(AccelAxisType axis, int32_t direction)
       break;
     case ACCEL_AXIS_Y:
       APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=Y");
-      send_cmd();
       break;
     case ACCEL_AXIS_Z:
       APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=Z");
