@@ -28,32 +28,38 @@
             {
                 "file": "fonts/Oblivious.ttf",
                 "name": "FONT_BAT_PERC_10",
-                "type": "font"
+                "type": "font",
+                "compatibility": "2.7"
             },
             {
                 "file": "fonts/Oblivious.ttf",
                 "name": "FONT_TIME_42",
-                "type": "font"
+                "type": "font",
+                "compatibility": "2.7"
             },
             {
                 "file": "fonts/Oblivious.ttf",
                 "name": "FONT_DATE_22",
-                "type": "font"
+                "type": "font",
+                "compatibility": "2.7"
             },
             {
                 "file": "fonts/Oblivious.ttf",
                 "name": "FONT_TEMP_30",
-                "type": "font"
+                "type": "font",
+                "compatibility": "2.7"
             },
             {
                 "file": "fonts/Oblivious.ttf",
                 "name": "FONT_TEMP_40",
-                "type": "font"
+                "type": "font",
+                "compatibility": "2.7"
             },
             {
                 "file": "fonts/Oblivious.ttf",
                 "name": "FONT_LOCATION_10",
-                "type": "font"
+                "type": "font",
+                "compatibility": "2.7"
             },
             {
                 "file": "images/battery_100.png",
