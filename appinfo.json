@@ -6,6 +6,7 @@
     "appKeys": {},
     "shortName": "GeekyTime",
     "capabilities": [
+        "location",
         "configurable"
     ],
     "appKeys": {
