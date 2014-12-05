@@ -32,9 +32,9 @@ function fetchWeather(latitude, longitude) {
           var weatherResult = response.weather[0];
           icon = weatherResult.icon;
         }  
-        if (response && response.main && response.main.temp != null 
-            && response.main.temp != 'undefined' && response.main.temp != ''
-            && !isNaN(response.main.temp)) {
+        if (response && response.main && response.main.temp !== null && 
+            response.main.temp != 'undefined' && response.main.temp !== '' && 
+            !isNaN(response.main.temp)) {
           temperatureC = response.main.temp - 273.15;
           console.log('temp C before correction=' + temperatureC);
           console.log('temp Correction=' + tempCorrect);
@@ -71,7 +71,7 @@ function fetchWeather(latitude, longitude) {
         console.log("HTTP Error = " + req.status);
       }
     }
-  }
+  };
   req.send(null);
 }
 
@@ -105,13 +105,13 @@ function locationError(err) {
 function initConfigOptions()
 {
   var tempScaleLS = localStorage.getItem('tempScale');
-  if (tempScaleLS != null && tempScaleLS != 'undefined' && tempScaleLS.length == 1)
+  if (tempScaleLS !== null && tempScaleLS != 'undefined' && tempScaleLS.length == 1)
   {
     tempScale = tempScaleLS;
     console.log("Assigned tempScale from storage=" + tempScaleLS);
   }
   var tempCorrectLS = localStorage.getItem('tempCorrect');
-  if (tempCorrectLS != null && tempCorrectLS != 'undefined' && !isNaN(tempCorrectLS))
+  if (tempCorrectLS !== null && tempCorrectLS != 'undefined' && !isNaN(tempCorrectLS))
   {
     tempCorrect = parseFloat(tempCorrectLS);
     console.log("Assigned tempCorrect from storage=" + tempCorrectLS);
@@ -122,7 +122,7 @@ function initConfigOptions()
     console.log("Assigned default tempCorrect=0");
   }
   var btVibrateLS = localStorage.getItem('btVibrate');
-  if (btVibrateLS != null && btVibrateLS != 'undefined' && btVibrateLS.length > 0)
+  if (btVibrateLS !== null && btVibrateLS != 'undefined' && btVibrateLS.length > 0)
   {
     btVibrate = btVibrateLS;
     console.log("Assigned btVibrate from storage=" + btVibrateLS);
@@ -131,22 +131,22 @@ function initConfigOptions()
 
 function applyAndStoreConfigOptions(inOptions)
 {
-  if (inOptions != null && inOptions != 'undefined')
+  if (inOptions !== null && inOptions != 'undefined')
   {
     //these 2 options are for the JS running on the phone
-    if (inOptions.tempScale != null && inOptions.tempScale.length == 1)
+    if (inOptions.tempScale !== null && inOptions.tempScale.length == 1)
     {
       localStorage.setItem('tempScale', inOptions.tempScale);
       tempScale = inOptions.tempScale;
     }
-    if (inOptions.tempCorrect != null && !isNaN(inOptions.tempCorrect))
+    if (inOptions.tempCorrect !== null && !isNaN(inOptions.tempCorrect))
     {
       localStorage.setItem('tempCorrect', inOptions.tempCorrect);
       tempCorrect = parseFloat(inOptions.tempCorrect);
     }
 
     //this option is applicable to watch app only so store and send to watch
-    if (inOptions.btVibrate != null && inOptions.btVibrate.length > 0)
+    if (inOptions.btVibrate !== null && inOptions.btVibrate.length > 0)
     {
       localStorage.setItem('btVibrate', inOptions.btVibrate);
       btVibrate = inOptions.btVibrate;
@@ -168,14 +168,14 @@ Pebble.addEventListener("ready",
                           {
                             console.log("JS - performing init tasks" + e.ready);
                             initConfigOptions();
-                            locationWatcher = window.navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
+                            navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
                             initDone = true;
                           }
                         });
 
 Pebble.addEventListener("appmessage",
                         function(e) {
-                          window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                          navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                           console.log(e.type);
                         });
 
@@ -185,7 +185,7 @@ Pebble.addEventListener("webviewclosed",
                          var options = JSON.parse(decodeURIComponent(e.response));
                          console.log("Options = " + JSON.stringify(options));
                          applyAndStoreConfigOptions(options);
-                         window.navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                         navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                          });
 
 Pebble.addEventListener("showConfiguration", 
