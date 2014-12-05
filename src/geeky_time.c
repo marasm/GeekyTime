@@ -20,6 +20,9 @@ static GBitmap *battery_bitmap = NULL;
 static GBitmap *icon_bitmap = NULL;
 static GBitmap *therm_bitmap = NULL;
 
+static GFont custom_font_temp_30;
+static GFont custom_font_temp_40;
+
 static bool bt_connected = 1;
 static AppSync sync;
 static uint8_t sync_buffer[64];
@@ -72,7 +75,56 @@ static bool is_valid_temp(const char * st)
 
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %d", app_message_error);
+  char *error_desc;
+  switch (app_message_error) {
+    case APP_MSG_OK: 
+      error_desc = "APP_MSG_OK";
+      break;
+    case APP_MSG_SEND_TIMEOUT: 
+      error_desc =  "APP_MSG_SEND_TIMEOUT";
+      break;
+    case APP_MSG_SEND_REJECTED: 
+      error_desc =  "APP_MSG_SEND_REJECTED";
+      break;
+    case APP_MSG_NOT_CONNECTED: 
+      error_desc =  "APP_MSG_NOT_CONNECTED";
+      break;
+    case APP_MSG_APP_NOT_RUNNING: 
+      error_desc =  "APP_MSG_APP_NOT_RUNNING";
+      break;
+    case APP_MSG_INVALID_ARGS: 
+      error_desc =  "APP_MSG_INVALID_ARGS";
+      break;
+    case APP_MSG_BUSY: 
+      error_desc =  "APP_MSG_BUSY";
+      break;
+    case APP_MSG_BUFFER_OVERFLOW: 
+      error_desc =  "APP_MSG_BUFFER_OVERFLOW";
+      break;
+    case APP_MSG_ALREADY_RELEASED: 
+      error_desc =  "APP_MSG_ALREADY_RELEASED";
+      break;
+    case APP_MSG_CALLBACK_ALREADY_REGISTERED: 
+      error_desc =  "APP_MSG_CALLBACK_ALREADY_REGISTERED";
+      break;
+    case APP_MSG_CALLBACK_NOT_REGISTERED: 
+      error_desc =  "APP_MSG_CALLBACK_NOT_REGISTERED";
+      break;
+    case APP_MSG_OUT_OF_MEMORY: 
+      error_desc =  "APP_MSG_OUT_OF_MEMORY";
+      break;
+    case APP_MSG_CLOSED: 
+      error_desc =  "APP_MSG_CLOSED";
+      break;
+    case APP_MSG_INTERNAL_ERROR: 
+      error_desc =  "APP_MSG_INTERNAL_ERROR";
+      break;
+    default: 
+      error_desc =  "UNKNOWN ERROR";
+      break;
+  }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %s", error_desc);
+  
   if (comm_bitmap)
   {
     gbitmap_destroy(comm_bitmap);
@@ -177,17 +229,20 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       {
         if (strlen(new_tuple->value->cstring) > 2)
         {
-          text_layer_set_font(temp_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30)));
+          APP_LOG(APP_LOG_LEVEL_DEBUG, "3 digit temp detected. Setting font to 30");
+          text_layer_set_font(temp_layer, custom_font_temp_30);
         }
         else
         {
-          text_layer_set_font(temp_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40)));
+          APP_LOG(APP_LOG_LEVEL_DEBUG, "2 digit temp detected. Setting font to 40");
+          text_layer_set_font(temp_layer, custom_font_temp_40);
         }
         text_layer_set_text(temp_layer, new_tuple->value->cstring);
       }
       else
       {
-        text_layer_set_font(temp_layer, fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40)));
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected. Setting font to 40 and value to --");
+        text_layer_set_font(temp_layer, custom_font_temp_40);
         text_layer_set_text(temp_layer, "--");
       }
       break;
@@ -253,6 +308,7 @@ static void handle_tap(AccelAxisType axis, int32_t direction)
       break;
     case ACCEL_AXIS_Y:
       APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=Y");
+      send_cmd();
       break;
     case ACCEL_AXIS_Z:
       APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=Z");
@@ -430,9 +486,11 @@ static void init() {
   bitmap_layer_set_bitmap(therm_layer, therm_bitmap);
 
   //TEMP
+  custom_font_temp_30 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
+  custom_font_temp_40 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
+  
   temp_layer = text_layer_create(GRect(81, 95, 144-85 /* width */, 55 /* 168 max height */));
-  GFont custom_font_temp = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
-  text_layer_set_font(temp_layer, custom_font_temp);
+  text_layer_set_font(temp_layer, custom_font_temp_40);
   text_layer_set_text_alignment(temp_layer, GTextAlignmentCenter);
   text_layer_set_background_color(temp_layer, GColorClear);
   text_layer_set_text_color(temp_layer, GColorWhite);
