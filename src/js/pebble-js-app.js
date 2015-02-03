@@ -26,14 +26,14 @@ function fetchWeather(latitude, longitude) {
         var temperature = '--';
         var temperatureC = '--';
         var temperatureF = '--';
-        var icon = '00'; 
+        var icon = '00';
         var location = 'Unknown';
         if (response && response.weather && response.weather.length > 0) {
           var weatherResult = response.weather[0];
           icon = weatherResult.icon;
-        }  
-        if (response && response.main && response.main.temp !== null && 
-            response.main.temp != 'undefined' && response.main.temp !== '' && 
+        }
+        if (response && response.main && response.main.temp !== null &&
+            response.main.temp != 'undefined' && response.main.temp !== '' &&
             !isNaN(response.main.temp)) {
           temperatureC = response.main.temp - 273.15;
           console.log('temp C before correction=' + temperatureC);
@@ -65,8 +65,8 @@ function fetchWeather(latitude, longitude) {
           "temperature":temperature.toString(),
           "location":location}, sendToWatchSuccess, sendToWatchFail);
 
-      } 
-      else 
+      }
+      else
       {
         console.log("HTTP Error = " + req.status);
       }
@@ -158,7 +158,7 @@ function applyAndStoreConfigOptions(inOptions)
   }
 }
 
-var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minutes 
+var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minutes
 
 
 Pebble.addEventListener("ready",
@@ -168,7 +168,7 @@ Pebble.addEventListener("ready",
                           {
                             console.log("JS - performing init tasks" + e.ready);
                             initConfigOptions();
-                            navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
+                            //navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
                             initDone = true;
                           }
                         });
@@ -188,11 +188,9 @@ Pebble.addEventListener("webviewclosed",
                          navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                          });
 
-Pebble.addEventListener("showConfiguration", 
+Pebble.addEventListener("showConfiguration",
                          function() {
                          console.log("showing configuration");
                          initConfigOptions();
                          Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate);
                          });
-
-
