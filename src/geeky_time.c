@@ -1,6 +1,10 @@
 
 #include "pebble.h"
 
+//the below 2 lines disable logging
+#undef APP_LOG
+#define APP_LOG(...)
+
 static Window *window;
 
 static TextLayer *bat_perc_layer;
@@ -45,7 +49,7 @@ static const uint32_t BATTERY_ICONS[] = {
 };
 
 
-static bool is_valid_temp(const char * st) 
+static bool is_valid_temp(const char * st)
 {
   int len = strlen(st);
   int ascii_code;
@@ -53,7 +57,7 @@ static bool is_valid_temp(const char * st)
 
   for (int i = 0; i < len; i++) {
     ascii_code = (int)st[i];
-    switch (ascii_code) 
+    switch (ascii_code)
     {
 
       case 45: // Allow a negative sign.
@@ -77,54 +81,58 @@ static bool is_valid_temp(const char * st)
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
   char *error_desc;
   switch (app_message_error) {
-    case APP_MSG_OK: 
+    case APP_MSG_OK:
       error_desc = "APP_MSG_OK";
       break;
-    case APP_MSG_SEND_TIMEOUT: 
+    case APP_MSG_SEND_TIMEOUT:
       error_desc =  "APP_MSG_SEND_TIMEOUT";
       break;
-    case APP_MSG_SEND_REJECTED: 
+    case APP_MSG_SEND_REJECTED:
       error_desc =  "APP_MSG_SEND_REJECTED";
       break;
-    case APP_MSG_NOT_CONNECTED: 
+    case APP_MSG_NOT_CONNECTED:
       error_desc =  "APP_MSG_NOT_CONNECTED";
       break;
-    case APP_MSG_APP_NOT_RUNNING: 
+    case APP_MSG_APP_NOT_RUNNING:
       error_desc =  "APP_MSG_APP_NOT_RUNNING";
       break;
-    case APP_MSG_INVALID_ARGS: 
+    case APP_MSG_INVALID_ARGS:
       error_desc =  "APP_MSG_INVALID_ARGS";
       break;
-    case APP_MSG_BUSY: 
+    case APP_MSG_BUSY:
       error_desc =  "APP_MSG_BUSY";
       break;
-    case APP_MSG_BUFFER_OVERFLOW: 
+    case APP_MSG_BUFFER_OVERFLOW:
       error_desc =  "APP_MSG_BUFFER_OVERFLOW";
       break;
-    case APP_MSG_ALREADY_RELEASED: 
+    case APP_MSG_ALREADY_RELEASED:
       error_desc =  "APP_MSG_ALREADY_RELEASED";
       break;
-    case APP_MSG_CALLBACK_ALREADY_REGISTERED: 
+    case APP_MSG_CALLBACK_ALREADY_REGISTERED:
       error_desc =  "APP_MSG_CALLBACK_ALREADY_REGISTERED";
       break;
-    case APP_MSG_CALLBACK_NOT_REGISTERED: 
+    case APP_MSG_CALLBACK_NOT_REGISTERED:
       error_desc =  "APP_MSG_CALLBACK_NOT_REGISTERED";
       break;
-    case APP_MSG_OUT_OF_MEMORY: 
+    case APP_MSG_OUT_OF_MEMORY:
       error_desc =  "APP_MSG_OUT_OF_MEMORY";
       break;
-    case APP_MSG_CLOSED: 
+    case APP_MSG_CLOSED:
       error_desc =  "APP_MSG_CLOSED";
       break;
-    case APP_MSG_INTERNAL_ERROR: 
+    case APP_MSG_INTERNAL_ERROR:
       error_desc =  "APP_MSG_INTERNAL_ERROR";
       break;
-    default: 
+    default:
       error_desc =  "UNKNOWN ERROR";
       break;
   }
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %s", error_desc);
-  
+
+  if (error_desc != NULL)
+  {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %s", error_desc);
+  }
+
   if (comm_bitmap)
   {
     gbitmap_destroy(comm_bitmap);
@@ -132,7 +140,7 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
   comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ERR);
   bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
   layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
-  
+
 }
 
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
@@ -219,7 +227,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       {
         icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
       }
-      
+
       bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
       layer_mark_dirty(bitmap_layer_get_layer(icon_layer));
       break;
@@ -358,12 +366,12 @@ static void handle_battery(BatteryChargeState charge_state) {
   if (charge_state.is_charging || charge_state.is_plugged) {
 
     battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[0]);
-  } 
+  }
   else {
     if (charge_state.charge_percent > 80) //80 - 100% charge
     {
       battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[5]);
-    } 
+    }
     else if (charge_state.charge_percent > 60 && charge_state.charge_percent <= 80) //60 - 80% charge
     {
       battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[4]);
@@ -379,8 +387,8 @@ static void handle_battery(BatteryChargeState charge_state) {
     else  //less than 20% charge
     {
       battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[1]);
-    }   
-    
+    }
+
   }
   APP_LOG(APP_LOG_LEVEL_DEBUG, "handle_battery: %i remaining", charge_state.charge_percent);
   snprintf(battery_text, sizeof(battery_text), "%d%%", charge_state.charge_percent);
@@ -410,7 +418,7 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
 
     text_layer_set_text(time_layer, time_text);
     text_layer_set_text(date_layer, date_text);
-    
+
   }
   //Make sure that the weather is refreshed at least hourly
   if(units_changed & HOUR_UNIT) {
@@ -473,7 +481,7 @@ static void init() {
   text_layer_set_text_color(date_layer, GColorWhite);
 
   layer_add_child(window_layer, text_layer_get_layer(date_layer));
-  
+
   //WEATHER ICON
   icon_layer = bitmap_layer_create(GRect(5, 90, 60, 60));
   layer_add_child(window_layer, bitmap_layer_get_layer(icon_layer));
@@ -487,7 +495,7 @@ static void init() {
   //TEMP
   custom_font_temp_30 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
   custom_font_temp_40 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
-  
+
   temp_layer = text_layer_create(GRect(81, 95, 144-85 /* width */, 55 /* 168 max height */));
   text_layer_set_font(temp_layer, custom_font_temp_40);
   text_layer_set_text_alignment(temp_layer, GTextAlignmentCenter);
@@ -505,7 +513,7 @@ static void init() {
   text_layer_set_text_color(weather_loc_layer, GColorWhite);
 
   layer_add_child(window_layer, text_layer_get_layer(weather_loc_layer));
-  
+
 
   //TEST DUMMY Stuff
   // text_layer_set_text(bat_perc_layer, "100%");
@@ -517,7 +525,7 @@ static void init() {
   // text_layer_set_text(date_layer, "Sun 12:22");
   // text_layer_set_text(temp_layer, "74");
   // text_layer_set_text(weather_loc_layer, "Denver, CO");
-  
+
 
   //EVENT SUBSCRIBTIONS
   time_t now = time(NULL);
@@ -553,10 +561,10 @@ static void init() {
     TupletCString(CONFIG_BT_VIBRATE, bt_vibrate_str)
   };
 
-  app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values, 
+  app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values,
       ARRAY_LENGTH(initial_values),
       sync_tuple_changed_callback, sync_error_callback, NULL);
-  
+
   // handle_time_tick(current_time, HOUR_UNIT);
 }
 
