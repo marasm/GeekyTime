@@ -233,7 +233,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       break;
 
     case WEATHER_TEMPERATURE_KEY:
-      if (is_valid_temp(new_tuple->value->cstring))
+      if (is_valid_temp(new_tuple->value->cstring) || strcmp("--", new_tuple->value->cstring) == 0)
       {
         if (strlen(new_tuple->value->cstring) > 2)
         {
@@ -247,15 +247,11 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         }
         text_layer_set_text(temp_layer, new_tuple->value->cstring);
       }
-      else if (strcmp("--", new_tuple->value->cstring) == 0)
-      {
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "initial temp value detected. making sure font size is 40");
-        text_layer_set_font(temp_layer, custom_font_temp_40);
-        text_layer_set_text(temp_layer, "--");
-      }
       else
       {
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected. Will not update temp display");
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected. Will keep current value = %s",
+          old_tuple->value->cstring);
+        text_layer_set_text(temp_layer, old_tuple->value->cstring);
       }
       break;
 
@@ -492,9 +488,10 @@ static void init() {
 
   //THERM
   therm_layer = bitmap_layer_create(GRect(65, 102, 16, 36));
-  layer_add_child(window_layer, bitmap_layer_get_layer(therm_layer));
   therm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_THERM);
   bitmap_layer_set_bitmap(therm_layer, therm_bitmap);
+
+  layer_add_child(window_layer, bitmap_layer_get_layer(therm_layer));
 
   //TEMP
   custom_font_temp_30 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
@@ -507,7 +504,7 @@ static void init() {
   text_layer_set_text_color(temp_layer, GColorWhite);
 
   layer_add_child(window_layer, text_layer_get_layer(temp_layer));
-  
+
   //WEATHER LOCATION
   GFont custom_font_weather_loc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LOCATION_10));
   weather_loc_layer = text_layer_create(GRect(10, 145, 134 /* width */, 18 /* 168 max height */));

@@ -216,7 +216,7 @@
     "shortName": "GeekyTime",
     "uuid": "42950f77-0eda-476b-958a-df87537d3eb9",
     "versionCode": 1,
-    "versionLabel": "1.10",
+    "versionLabel": "1.11",
     "watchapp": {
         "watchface": true
     }
