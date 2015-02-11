@@ -247,11 +247,15 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         }
         text_layer_set_text(temp_layer, new_tuple->value->cstring);
       }
-      else
+      else if (strcmp("--", new_tuple->value->cstring) == 0)
       {
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected. Setting font to 40 and value to --");
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "initial temp value detected. making sure font size is 40");
         text_layer_set_font(temp_layer, custom_font_temp_40);
         text_layer_set_text(temp_layer, "--");
+      }
+      else
+      {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected. Will not update temp display");
       }
       break;
 
@@ -503,7 +507,7 @@ static void init() {
   text_layer_set_text_color(temp_layer, GColorWhite);
 
   layer_add_child(window_layer, text_layer_get_layer(temp_layer));
-
+  
   //WEATHER LOCATION
   GFont custom_font_weather_loc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LOCATION_10));
   weather_loc_layer = text_layer_create(GRect(10, 145, 134 /* width */, 18 /* 168 max height */));
@@ -565,7 +569,7 @@ static void init() {
       ARRAY_LENGTH(initial_values),
       sync_tuple_changed_callback, sync_error_callback, NULL);
 
-  // handle_time_tick(current_time, HOUR_UNIT);
+  send_cmd();
 }
 
 static void deinit() {
