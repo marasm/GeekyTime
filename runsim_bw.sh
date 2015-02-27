@@ -1,0 +1,2 @@
+pebble install --emulator aplite
+
