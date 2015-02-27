@@ -2,8 +2,8 @@
 #include "pebble.h"
 
 //the below 2 lines disable logging
-#undef APP_LOG
-#define APP_LOG(...)
+//#undef APP_LOG
+//#define APP_LOG(...)
 
 static Window *window;
 
@@ -40,6 +40,7 @@ enum TupleKey {
 };
 
 #ifdef PBL_COLOR
+static const bool is_color_supported = 1;
 static const uint32_t BATTERY_ICONS[] = {
   RESOURCE_ID_IMG_BATTERY_CHRG_COL, //0
   RESOURCE_ID_IMG_BATTERY_20_COL,   //1
@@ -49,6 +50,7 @@ static const uint32_t BATTERY_ICONS[] = {
   RESOURCE_ID_IMG_BATTERY_100_COL,  //5
 };
 #else
+static const bool is_color_supported = 0;
 static const uint32_t BATTERY_ICONS[] = {
   RESOURCE_ID_IMG_BATTERY_CHRG, //0
   RESOURCE_ID_IMG_BATTERY_20,   //1
@@ -351,7 +353,14 @@ static void handle_bluetooth(bool connected) {
   }
   if (connected)
   {
-    bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_BT_ON);
+    if (is_color_supported)
+    {
+      bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_BT_ON_COL);
+    }
+    else
+    {
+      bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_BT_ON);
+    }
     if (!bt_connected)
     {
       bt_connected = 1;
@@ -517,7 +526,14 @@ static void init() {
 
   //THERM
   therm_layer = bitmap_layer_create(GRect(65, 102, 16, 36));
-  therm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_THERM);
+  if (is_color_supported)
+  {
+    therm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_THERM_COL);
+  }
+  else
+  {
+    therm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_THERM);
+  }
   bitmap_layer_set_bitmap(therm_layer, therm_bitmap);
 
   layer_add_child(window_layer, bitmap_layer_get_layer(therm_layer));
