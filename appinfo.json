@@ -122,7 +122,7 @@
       {
         "file": "images/comm_off.png",
         "name": "IMG_COMM_OFF",
-        "type": "png"
+        "type": "raw"
       },
       {
         "file": "images/comm_on.png",
@@ -132,7 +132,7 @@
       {
         "file": "images/bt_off.png",
         "name": "IMG_BT_OFF",
-        "type": "png"
+        "type": "raw"
       },
       {
         "file": "images/bt_on.png",
