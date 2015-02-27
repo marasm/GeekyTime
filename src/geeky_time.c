@@ -39,6 +39,16 @@ enum TupleKey {
   CONFIG_BT_VIBRATE = 0x64        // TUPLE_CSTRING (100 in decimal)
 };
 
+#ifdef PBL_COLOR
+static const uint32_t BATTERY_ICONS[] = {
+  RESOURCE_ID_IMG_BATTERY_CHRG_COL, //0
+  RESOURCE_ID_IMG_BATTERY_20_COL,   //1
+  RESOURCE_ID_IMG_BATTERY_40_COL,   //2
+  RESOURCE_ID_IMG_BATTERY_60_COL,   //3
+  RESOURCE_ID_IMG_BATTERY_80_COL,   //4
+  RESOURCE_ID_IMG_BATTERY_100_COL,  //5
+};
+#else
 static const uint32_t BATTERY_ICONS[] = {
   RESOURCE_ID_IMG_BATTERY_CHRG, //0
   RESOURCE_ID_IMG_BATTERY_20,   //1
@@ -47,6 +57,7 @@ static const uint32_t BATTERY_ICONS[] = {
   RESOURCE_ID_IMG_BATTERY_80,   //4
   RESOURCE_ID_IMG_BATTERY_100,  //5
 };
+#endif
 
 
 static bool is_valid_temp(const char * st)
@@ -430,14 +441,14 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
 
   }
   //if the temp has not been refreshed yet ("--") do it no
-  if(temp_layer && 
+  if(temp_layer &&
      text_layer_get_text(temp_layer) != NULL &&
      strcmp("--", text_layer_get_text(temp_layer)) == 0)
   {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Default temp of -- detected during minute tick. Request weather refresh");
     send_cmd();
   }
-  
+
   //Make sure that the weather is refreshed at least hourly
   if(units_changed & HOUR_UNIT) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Hour tick");

@@ -15,158 +15,188 @@
   "resources": {
     "media": [
       {
-        "file": "images/therm.png",
+        "file": "images/bw/therm.png",
         "name": "IMG_THERM",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_50n.png",
+        "file": "images/bw/weather_icn_50n.png",
         "name": "IMG_WEATHER_50n",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_50d.png",
+        "file": "images/bw/weather_icn_50d.png",
         "name": "IMG_WEATHER_50d",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_13n.png",
+        "file": "images/bw/weather_icn_13n.png",
         "name": "IMG_WEATHER_13n",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_13d.png",
+        "file": "images/bw/weather_icn_13d.png",
         "name": "IMG_WEATHER_13d",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_11n.png",
+        "file": "images/bw/weather_icn_11n.png",
         "name": "IMG_WEATHER_11n",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_11d.png",
+        "file": "images/bw/weather_icn_11d.png",
         "name": "IMG_WEATHER_11d",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_10n.png",
+        "file": "images/bw/weather_icn_10n.png",
         "name": "IMG_WEATHER_10n",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_10d.png",
+        "file": "images/bw/weather_icn_10d.png",
         "name": "IMG_WEATHER_10d",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_09n.png",
+        "file": "images/bw/weather_icn_09n.png",
         "name": "IMG_WEATHER_09n",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_09d.png",
+        "file": "images/bw/weather_icn_09d.png",
         "name": "IMG_WEATHER_09d",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_04n.png",
+        "file": "images/bw/weather_icn_04n.png",
         "name": "IMG_WEATHER_04n",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_04d.png",
+        "file": "images/bw/weather_icn_04d.png",
         "name": "IMG_WEATHER_04d",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_03n.png",
+        "file": "images/bw/weather_icn_03n.png",
         "name": "IMG_WEATHER_03n",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_03d.png",
+        "file": "images/bw/weather_icn_03d.png",
         "name": "IMG_WEATHER_03d",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_02n.png",
+        "file": "images/bw/weather_icn_02n.png",
         "name": "IMG_WEATHER_02n",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_02d.png",
+        "file": "images/bw/weather_icn_02d.png",
         "name": "IMG_WEATHER_02d",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_01n.png",
+        "file": "images/bw/weather_icn_01n.png",
         "name": "IMG_WEATHER_01n",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_01d.png",
+        "file": "images/bw/weather_icn_01d.png",
         "name": "IMG_WEATHER_01d",
         "type": "png"
       },
       {
-        "file": "images/weather_icn_00.png",
+        "file": "images/bw/weather_icn_00.png",
         "name": "IMG_WEATHER_00",
         "type": "png"
       },
       {
-        "file": "images/comm_err.png",
+        "file": "images/bw/comm_err.png",
         "name": "IMG_COMM_ERR",
         "type": "png"
       },
       {
-        "file": "images/comm_off.png",
+        "file": "images/bw/comm_off.png",
         "name": "IMG_COMM_OFF",
         "type": "raw"
       },
       {
-        "file": "images/comm_on.png",
+        "file": "images/bw/comm_on.png",
         "name": "IMG_COMM_ON",
         "type": "png"
       },
       {
-        "file": "images/bt_off.png",
+        "file": "images/bw/bt_off.png",
         "name": "IMG_BT_OFF",
         "type": "raw"
       },
       {
-        "file": "images/bt_on.png",
+        "file": "images/bw/bt_on.png",
         "name": "IMG_BT_ON",
         "type": "png"
       },
       {
-        "file": "images/battery_chrg.png",
+        "file": "images/bw/battery_chrg.png",
         "name": "IMG_BATTERY_CHRG",
         "type": "png"
       },
       {
-        "file": "images/battery_20.png",
+        "file": "images/bw/battery_20.png",
         "name": "IMG_BATTERY_20",
         "type": "png"
       },
       {
-        "file": "images/battery_40.png",
+        "file": "images/bw/battery_40.png",
         "name": "IMG_BATTERY_40",
         "type": "png"
       },
       {
-        "file": "images/battery_60.png",
+        "file": "images/bw/battery_60.png",
         "name": "IMG_BATTERY_60",
         "type": "png"
       },
       {
-        "file": "images/battery_80.png",
+        "file": "images/bw/battery_80.png",
         "name": "IMG_BATTERY_80",
         "type": "png"
       },
       {
-        "file": "images/battery_100.png",
+        "file": "images/bw/battery_100.png",
         "name": "IMG_BATTERY_100",
+        "type": "png"
+      },
+      {
+        "file": "images/color/battery_chrg.png",
+        "name": "IMG_BATTERY_CHRG_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/color/battery_20.png",
+        "name": "IMG_BATTERY_20_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/color/battery_40.png",
+        "name": "IMG_BATTERY_40_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/color/battery_60.png",
+        "name": "IMG_BATTERY_60_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/color/battery_80.png",
+        "name": "IMG_BATTERY_80_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/color/battery_100.png",
+        "name": "IMG_BATTERY_100_COL",
         "type": "png"
       },
       {
@@ -206,7 +236,7 @@
         "type": "font"
       },
       {
-        "file": "images/app_icon.png",
+        "file": "images/common/app_icon.png",
         "menuIcon": true,
         "name": "IMAGE_MENU_ICON",
         "type": "png"
