@@ -249,9 +249,18 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       }
       else
       {
-        APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected. Will keep current value = %s",
-          old_tuple->value->cstring);
-        text_layer_set_text(temp_layer, old_tuple->value->cstring);
+        if (is_valid_temp(old_tuple->value->cstring))
+        {
+          APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected. Will keep current value = %s",
+            old_tuple->value->cstring);
+          text_layer_set_text(temp_layer, old_tuple->value->cstring);
+        }
+        else
+        {
+          APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected and the previous value is bad too. Using -- ");
+          text_layer_set_font(temp_layer, custom_font_temp_40);
+          text_layer_set_text(temp_layer, "--");
+        }
       }
       break;
 
@@ -420,6 +429,15 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
     text_layer_set_text(date_layer, date_text);
 
   }
+  //if the temp has not been refreshed yet ("--") do it no
+  if(temp_layer && 
+     text_layer_get_text(temp_layer) != NULL &&
+     strcmp("--", text_layer_get_text(temp_layer)) == 0)
+  {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Default temp of -- detected during minute tick. Request weather refresh");
+    send_cmd();
+  }
+  
   //Make sure that the weather is refreshed at least hourly
   if(units_changed & HOUR_UNIT) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Hour tick");
@@ -566,7 +584,7 @@ static void init() {
       ARRAY_LENGTH(initial_values),
       sync_tuple_changed_callback, sync_error_callback, NULL);
 
-  send_cmd();
+//   send_cmd();
 }
 
 static void deinit() {
