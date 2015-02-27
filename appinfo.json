@@ -170,6 +170,131 @@
         "type": "png"
       },
       {
+        "file": "images/bw/therm.png",
+        "name": "IMG_THERM_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_50n.png",
+        "name": "IMG_WEATHER_50n_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_50d.png",
+        "name": "IMG_WEATHER_50d_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_13n.png",
+        "name": "IMG_WEATHER_13n_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_13d.png",
+        "name": "IMG_WEATHER_13d_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_11n.png",
+        "name": "IMG_WEATHER_11n_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_11d.png",
+        "name": "IMG_WEATHER_11d_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_10n.png",
+        "name": "IMG_WEATHER_10n_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_10d.png",
+        "name": "IMG_WEATHER_10d_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_09n.png",
+        "name": "IMG_WEATHER_09n_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_09d.png",
+        "name": "IMG_WEATHER_09d_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_04n.png",
+        "name": "IMG_WEATHER_04n_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_04d.png",
+        "name": "IMG_WEATHER_04d_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_03n.png",
+        "name": "IMG_WEATHER_03n_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_03d.png",
+        "name": "IMG_WEATHER_03d_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_02n.png",
+        "name": "IMG_WEATHER_02n_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_02d.png",
+        "name": "IMG_WEATHER_02d_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_01n.png",
+        "name": "IMG_WEATHER_01n_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_01d.png",
+        "name": "IMG_WEATHER_01d_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/weather_icn_00.png",
+        "name": "IMG_WEATHER_00_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/comm_err.png",
+        "name": "IMG_COMM_ERR_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/comm_off.png",
+        "name": "IMG_COMM_OFF_COL",
+        "type": "raw"
+      },
+      {
+        "file": "images/bw/comm_on.png",
+        "name": "IMG_COMM_ON_COL",
+        "type": "png"
+      },
+      {
+        "file": "images/bw/bt_off.png",
+        "name": "IMG_BT_OFF_COL",
+        "type": "raw"
+      },
+      {
+        "file": "images/bw/bt_on.png",
+        "name": "IMG_BT_ON_COL",
+        "type": "png"
+      },
+      {
         "file": "images/color/battery_chrg.png",
         "name": "IMG_BATTERY_CHRG_COL",
         "type": "png"
