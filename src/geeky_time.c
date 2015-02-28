@@ -150,7 +150,14 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
   {
     gbitmap_destroy(comm_bitmap);
   }
-  comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ERR);
+  if (is_color_supported)
+  {
+    comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ERR_COL);
+  }
+  else
+  {
+    comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ERR);
+  }
   bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
   layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
 
@@ -161,84 +168,167 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Callback. Tuple Value=%s", new_tuple->value->cstring);
   switch (key) {
     case WEATHER_ICON_KEY:
-      if (icon_bitmap) {
+      if (icon_bitmap)
+      {
         gbitmap_destroy(icon_bitmap);
       }
-      if (strcmp("01d", new_tuple->value->cstring) == 0)
+      if (is_color_supported)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01d);
-      }
-      else if (strcmp("01n", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01n);
-      }
-      else if (strcmp("02d", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_02d);
-      }
-      else if (strcmp("02n", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_02n);
-      }
-      else if (strcmp("03d", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_03d);
-      }
-      else if (strcmp("03n", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_03n);
-      }
-      else if (strcmp("04d", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_04d);
-      }
-      else if (strcmp("04n", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_04n);
-      }
-      else if (strcmp("09d", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_09d);
-      }
-      else if (strcmp("09n", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_09n);
-      }
-      else if (strcmp("10d", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_10d);
-      }
-      else if (strcmp("10n", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_10n);
-      }
-      else if (strcmp("11d", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_11d);
-      }
-      else if (strcmp("11n", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_11n);
-      }
-      else if (strcmp("13d", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_13d);
-      }
-      else if (strcmp("13n", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_13n);
-      }
-      else if (strcmp("50d", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_50d);
-      }
-      else if (strcmp("50n", new_tuple->value->cstring) == 0)
-      {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_50n);
+        if (strcmp("01d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01d_COL);
+        }
+        else if (strcmp("01n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01n_COL);
+        }
+        else if (strcmp("02d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_02d_COL);
+        }
+        else if (strcmp("02n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_02n_COL);
+        }
+        else if (strcmp("03d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_03d_COL);
+        }
+        else if (strcmp("03n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_03n_COL);
+        }
+        else if (strcmp("04d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_04d_COL);
+        }
+        else if (strcmp("04n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_04n_COL);
+        }
+        else if (strcmp("09d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_09d_COL);
+        }
+        else if (strcmp("09n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_09n_COL);
+        }
+        else if (strcmp("10d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_10d_COL);
+        }
+        else if (strcmp("10n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_10n_COL);
+        }
+        else if (strcmp("11d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_11d_COL);
+        }
+        else if (strcmp("11n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_11n_COL);
+        }
+        else if (strcmp("13d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_13d_COL);
+        }
+        else if (strcmp("13n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_13n_COL);
+        }
+        else if (strcmp("50d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_50d_COL);
+        }
+        else if (strcmp("50n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_50n_COL);
+        }
+        else
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00_COL);
+        }
       }
       else
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
+        if (strcmp("01d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01d);
+        }
+        else if (strcmp("01n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01n);
+        }
+        else if (strcmp("02d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_02d);
+        }
+        else if (strcmp("02n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_02n);
+        }
+        else if (strcmp("03d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_03d);
+        }
+        else if (strcmp("03n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_03n);
+        }
+        else if (strcmp("04d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_04d);
+        }
+        else if (strcmp("04n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_04n);
+        }
+        else if (strcmp("09d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_09d);
+        }
+        else if (strcmp("09n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_09n);
+        }
+        else if (strcmp("10d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_10d);
+        }
+        else if (strcmp("10n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_10n);
+        }
+        else if (strcmp("11d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_11d);
+        }
+        else if (strcmp("11n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_11n);
+        }
+        else if (strcmp("13d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_13d);
+        }
+        else if (strcmp("13n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_13n);
+        }
+        else if (strcmp("50d", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_50d);
+        }
+        else if (strcmp("50n", new_tuple->value->cstring) == 0)
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_50n);
+        }
+        else
+        {
+          icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
+        }
       }
 
       bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
@@ -310,7 +400,14 @@ static void send_cmd(void) {
   {
     gbitmap_destroy(comm_bitmap);
   }
-  comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ON);
+  if (is_color_supported)
+  {
+    comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ON_COL);
+  }
+  else
+  {
+    comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ON);
+  }
   bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
   layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
 
@@ -478,7 +575,14 @@ static void init() {
   //PHONE COMM
   comm_layer = bitmap_layer_create(GRect(35, 3, 10, 10));
   layer_add_child(window_layer, bitmap_layer_get_layer(comm_layer));
-  comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ON);
+  if (is_color_supported)
+  {
+    comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ON_COL);
+  }
+  else
+  {
+    comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ON);
+  }
   bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
   layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
 
