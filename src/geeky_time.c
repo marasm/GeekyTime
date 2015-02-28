@@ -2,8 +2,8 @@
 #include "pebble.h"
 
 //the below 2 lines disable logging
-//#undef APP_LOG
-//#define APP_LOG(...)
+#undef APP_LOG
+#define APP_LOG(...)
 
 static Window *window;
 
