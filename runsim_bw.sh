@@ -1,2 +1,3 @@
-pebble install --emulator aplite
+pebble build
 
+pebble install --emulator aplite --logs
