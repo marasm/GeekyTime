@@ -170,147 +170,147 @@
         "type": "png"
       },
       {
-        "file": "images/color/therm.png",
+        "file": "images/color/therm_c.png",
         "name": "IMG_THERM_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_50n.png",
+        "file": "images/color/weather_icn_50n_c.png",
         "name": "IMG_WEATHER_50n_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_50d.png",
+        "file": "images/color/weather_icn_50d_c.png",
         "name": "IMG_WEATHER_50d_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_13n.png",
+        "file": "images/color/weather_icn_13n_c.png",
         "name": "IMG_WEATHER_13n_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_13d.png",
+        "file": "images/color/weather_icn_13d_c.png",
         "name": "IMG_WEATHER_13d_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_11n.png",
+        "file": "images/color/weather_icn_11n_c.png",
         "name": "IMG_WEATHER_11n_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_11d.png",
+        "file": "images/color/weather_icn_11d_c.png",
         "name": "IMG_WEATHER_11d_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_10n.png",
+        "file": "images/color/weather_icn_10n_c.png",
         "name": "IMG_WEATHER_10n_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_10d.png",
+        "file": "images/color/weather_icn_10d_c.png",
         "name": "IMG_WEATHER_10d_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_09n.png",
+        "file": "images/color/weather_icn_09n_c.png",
         "name": "IMG_WEATHER_09n_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_09d.png",
+        "file": "images/color/weather_icn_09d_c.png",
         "name": "IMG_WEATHER_09d_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_04n.png",
+        "file": "images/color/weather_icn_04n_c.png",
         "name": "IMG_WEATHER_04n_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_04d.png",
+        "file": "images/color/weather_icn_04d_c.png",
         "name": "IMG_WEATHER_04d_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_03n.png",
+        "file": "images/color/weather_icn_03n_c.png",
         "name": "IMG_WEATHER_03n_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_03d.png",
+        "file": "images/color/weather_icn_03d_c.png",
         "name": "IMG_WEATHER_03d_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_02n.png",
+        "file": "images/color/weather_icn_02n_c.png",
         "name": "IMG_WEATHER_02n_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_02d.png",
+        "file": "images/color/weather_icn_02d_c.png",
         "name": "IMG_WEATHER_02d_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_01n.png",
+        "file": "images/color/weather_icn_01n_c.png",
         "name": "IMG_WEATHER_01n_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_01d.png",
+        "file": "images/color/weather_icn_01d_c.png",
         "name": "IMG_WEATHER_01d_COL",
         "type": "png"
       },
       {
-        "file": "images/color/weather_icn_00.png",
+        "file": "images/color/weather_icn_00_c.png",
         "name": "IMG_WEATHER_00_COL",
         "type": "png"
       },
       {
-        "file": "images/color/comm_err.png",
+        "file": "images/color/comm_err_c.png",
         "name": "IMG_COMM_ERR_COL",
         "type": "png"
       },
       {
-        "file": "images/color/comm_on.png",
+        "file": "images/color/comm_on_c.png",
         "name": "IMG_COMM_ON_COL",
         "type": "png"
       },
       {
-        "file": "images/color/bt_on.png",
+        "file": "images/color/bt_on_c.png",
         "name": "IMG_BT_ON_COL",
         "type": "png"
       },
       {
-        "file": "images/color/battery_chrg.png",
+        "file": "images/color/battery_chrg_c.png",
         "name": "IMG_BATTERY_CHRG_COL",
         "type": "png"
       },
       {
-        "file": "images/color/battery_20.png",
+        "file": "images/color/battery_20_c.png",
         "name": "IMG_BATTERY_20_COL",
         "type": "png"
       },
       {
-        "file": "images/color/battery_40.png",
+        "file": "images/color/battery_40_c.png",
         "name": "IMG_BATTERY_40_COL",
         "type": "png"
       },
       {
-        "file": "images/color/battery_60.png",
+        "file": "images/color/battery_60_c.png",
         "name": "IMG_BATTERY_60_COL",
         "type": "png"
       },
       {
-        "file": "images/color/battery_80.png",
+        "file": "images/color/battery_80_c.png",
         "name": "IMG_BATTERY_80_COL",
         "type": "png"
       },
       {
-        "file": "images/color/battery_100.png",
+        "file": "images/color/battery_100_c.png",
         "name": "IMG_BATTERY_100_COL",
         "type": "png"
       },
