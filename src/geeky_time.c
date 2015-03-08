@@ -1,5 +1,5 @@
 
-#include "pebble.h"
+#include <pebble.h>
 
 //the below 2 lines disable logging
 #undef APP_LOG
@@ -9,6 +9,7 @@ static Window *window;
 
 static TextLayer *bat_perc_layer;
 static TextLayer *time_layer;
+static TextLayer *second_layer;
 static TextLayer *date_layer;
 static TextLayer *temp_layer;
 static TextLayer *weather_loc_layer;
@@ -408,24 +409,27 @@ static void handle_battery(BatteryChargeState charge_state) {
 
 static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
 
-  if(units_changed & MINUTE_UNIT) {
+  if(units_changed & SECOND_UNIT) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Minute tick");
     static char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
-    static char date_text[] = "Sun 01/01"; // Needs to be static because it's used by the system later.
+    static char second_text[] = "00";
+    static char date_text[] = "Wednesday\n1970-01-01"; // Needs to be static because it's used by the system later.
     char *time_format;
     time_format = "%I:%M";
     if (clock_is_24h_style())
     {
-      time_format = "%R";
+      time_format = "%H:%M";
     }
 
     strftime(time_text, sizeof(time_text), time_format, tick_time);
+    strftime(second_text, sizeof(second_text), "%S", tick_time);
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Current time: %s", time_text);
 
-    strftime(date_text, sizeof(date_text), "%a %m-%d", tick_time);
+    strftime(date_text, sizeof(date_text), "%A\n%F", tick_time);
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Current date: %s", date_text);
 
     text_layer_set_text(time_layer, time_text);
+    text_layer_set_text(second_layer, second_text);
     text_layer_set_text(date_layer, date_text);
 
   }
@@ -481,8 +485,8 @@ static void init() {
   layer_add_child(window_layer, bitmap_layer_get_layer(battery_layer));
 
   //TIME
-  GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TIME_42));
-  time_layer = text_layer_create(GRect(2, 15, 144-2 /* width */, 45 /* 168 max height */));
+  GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TIME_40));
+  time_layer = text_layer_create(GRect(2, 15, 144-20 /* width */, 45 /* 168 max height */));
   text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
   text_layer_set_font(time_layer, custom_font_time);
   text_layer_set_background_color(time_layer, GColorClear);
@@ -490,9 +494,19 @@ static void init() {
 
   layer_add_child(window_layer, text_layer_get_layer(time_layer));
 
+  //SECOND
+  GFont custom_font_second = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_SECOND_10));
+  second_layer = text_layer_create(GRect(124, 47, 20 /* width */, 20 /* 168 max height */));
+  text_layer_set_text_alignment(second_layer, GTextAlignmentCenter);
+  text_layer_set_font(second_layer, custom_font_second);
+  text_layer_set_background_color(second_layer, GColorClear);
+  text_layer_set_text_color(second_layer, GColorWhite);
+
+  layer_add_child(window_layer, text_layer_get_layer(second_layer));
+
   //DATE
-  GFont custom_font_date = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DATE_22));
-  date_layer = text_layer_create(GRect(2, 65, 144-2 /* width */, 25 /* 168 max height */));
+  GFont custom_font_date = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_DATE_14));
+  date_layer = text_layer_create(GRect(2, 60, 144-2 /* width */, 35 /* 168 max height */));
   text_layer_set_text_alignment(date_layer, GTextAlignmentCenter);
   text_layer_set_font(date_layer, custom_font_date);
   text_layer_set_background_color(date_layer, GColorClear);
@@ -549,10 +563,10 @@ static void init() {
   //EVENT SUBSCRIBTIONS
   time_t now = time(NULL);
   struct tm *current_time = localtime(&now);
-  handle_time_tick(current_time, MINUTE_UNIT);
+  handle_time_tick(current_time, SECOND_UNIT);
   handle_battery(battery_state_service_peek());
   handle_bluetooth(bluetooth_connection_service_peek());
-  tick_timer_service_subscribe(MINUTE_UNIT|HOUR_UNIT, &handle_time_tick);
+  tick_timer_service_subscribe(SECOND_UNIT|MINUTE_UNIT|HOUR_UNIT, &handle_time_tick);
   battery_state_service_subscribe(&handle_battery);
   bluetooth_connection_service_subscribe(&handle_bluetooth);
   accel_tap_service_subscribe(&handle_tap);
@@ -595,6 +609,7 @@ static void deinit() {
   accel_tap_service_unsubscribe();
   text_layer_destroy(bat_perc_layer);
   text_layer_destroy(time_layer);
+  text_layer_destroy(second_layer);
   text_layer_destroy(date_layer);
   text_layer_destroy(temp_layer);
   text_layer_destroy(weather_loc_layer);
