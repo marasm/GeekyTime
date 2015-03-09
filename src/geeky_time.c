@@ -485,7 +485,7 @@ static void init() {
   layer_add_child(window_layer, bitmap_layer_get_layer(battery_layer));
 
   //TIME
-  GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TIME_40));
+  GFont custom_font_time = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TIME_42));
   time_layer = text_layer_create(GRect(2, 15, 144-20 /* width */, 45 /* 168 max height */));
   text_layer_set_text_alignment(time_layer, GTextAlignmentCenter);
   text_layer_set_font(time_layer, custom_font_time);
@@ -527,7 +527,7 @@ static void init() {
 
   //TEMP
   custom_font_temp_30 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
-  custom_font_temp_40 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_40));
+  custom_font_temp_40 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_42));
 
   temp_layer = text_layer_create(GRect(81, 95, 144-85 /* width */, 55 /* 168 max height */));
   text_layer_set_font(temp_layer, custom_font_temp_40);
@@ -539,7 +539,7 @@ static void init() {
 
   //WEATHER LOCATION
   GFont custom_font_weather_loc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LOCATION_10));
-  weather_loc_layer = text_layer_create(GRect(10, 145, 134 /* width */, 18 /* 168 max height */));
+  weather_loc_layer = text_layer_create(GRect(2, 145, 142 /* width */, 18 /* 168 max height */));
   text_layer_set_text_alignment(weather_loc_layer, GTextAlignmentCenter);
   text_layer_set_font(weather_loc_layer, custom_font_weather_loc);
   text_layer_set_background_color(weather_loc_layer, GColorClear);

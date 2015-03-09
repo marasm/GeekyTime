@@ -170,37 +170,37 @@
         "type": "png"
       },
       {
-        "file": "fonts/Oblivious.ttf",
+        "file": "fonts/Braciola MS.ttf",
         "name": "FONT_LOCATION_10",
         "type": "font"
       },
       {
-        "file": "fonts/Oblivious.ttf",
-        "name": "FONT_TEMP_40",
+        "file": "fonts/Braciola MS ExB.ttf",
+        "name": "FONT_TEMP_42",
         "type": "font"
       },
       {
-        "file": "fonts/Oblivious.ttf",
+        "file": "fonts/Braciola MS ExB.ttf",
         "name": "FONT_TEMP_30",
         "type": "font"
       },
       {
-        "file": "fonts/Oblivious.ttf",
+        "file": "fonts/Braciola MS.ttf",
         "name": "FONT_DATE_14",
         "type": "font"
       },
       {
-        "file": "fonts/Oblivious.ttf",
-        "name": "FONT_TIME_40",
+        "file": "fonts/Braciola MS ExB.ttf",
+        "name": "FONT_TIME_42",
         "type": "font"
       },
       {
-        "file": "fonts/Oblivious.ttf",
+        "file": "fonts/Braciola MS ExB.ttf",
         "name": "FONT_SECOND_10",
         "type": "font"
       },
       {
-        "file": "fonts/Oblivious.ttf",
+        "file": "fonts/Braciola MS ExB.ttf",
         "name": "FONT_BAT_PERC_10",
         "type": "font"
       },
@@ -215,7 +215,7 @@
   "shortName": "GeekyISOTime",
   "uuid": "9af6bfe3-e368-4e2a-94d5-b02c343edb6f",
   "versionCode": 1,
-  "versionLabel": "1.00",
+  "versionLabel": "1.02",
   "watchapp": {
     "watchface": true
   },
