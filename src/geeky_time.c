@@ -17,7 +17,7 @@ static TextLayer *weather_loc_layer;
 static BitmapLayer *bt_layer;
 static BitmapLayer *comm_layer;
 static BitmapLayer *battery_layer;
-static BitmapLayer *icon_layer;
+static TextLayer *icon_layer;
 static BitmapLayer *therm_layer;
 static GBitmap *bt_bitmap = NULL;
 static GBitmap *comm_bitmap = NULL;
@@ -147,90 +147,87 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "CallBack. Key=%i", (int)key);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Callback. Tuple Value=%s", new_tuple->value->cstring);
+  static char weather_text[]= {0xef, 0x81, 0x8c, 0x0a, 0x00};
   switch (key) {
     case WEATHER_ICON_KEY:
-      if (icon_bitmap) {
-        gbitmap_destroy(icon_bitmap);
-      }
       if (strcmp("01d", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01d);
+        strcpy(weather_text, "\xef\x81\x8c\x0a\x00");
       }
       else if (strcmp("01n", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_01n);
+        strcpy(weather_text, "\xef\x80\xae\x0a\x00");
       }
       else if (strcmp("02d", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_02d);
+        strcpy(weather_text, "\xef\x80\x82\x0a\x00");
       }
       else if (strcmp("02n", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_02n);
+        strcpy(weather_text, "\xef\x80\xb1\x0a\x00");
       }
       else if (strcmp("03d", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_03d);
+        strcpy(weather_text, "\xef\x81\x81\x0a\x00");
       }
       else if (strcmp("03n", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_03n);
+        strcpy(weather_text, "\xef\x81\x81\x0a\x00");
       }
       else if (strcmp("04d", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_04d);
+        strcpy(weather_text, "\xef\x80\x93\x0a\x00");
       }
       else if (strcmp("04n", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_04n);
+        strcpy(weather_text, "\xef\x80\x93\x0a\x00");
       }
       else if (strcmp("09d", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_09d);
+        strcpy(weather_text, "\xef\x80\x89\x0a\x00");
       }
       else if (strcmp("09n", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_09n);
+        strcpy(weather_text, "\xef\x80\xb7\x0a\x00");
       }
       else if (strcmp("10d", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_10d);
+        strcpy(weather_text, "\xef\x80\x88\x0a\x00");
       }
       else if (strcmp("10n", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_10n);
+        strcpy(weather_text, "\xef\x80\xb6\x0a\x00");
       }
       else if (strcmp("11d", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_11d);
+        strcpy(weather_text, "\xef\x80\x85\x0a\x00");
       }
       else if (strcmp("11n", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_11n);
+        strcpy(weather_text, "\xef\x80\xb3\x0a\x00");
       }
       else if (strcmp("13d", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_13d);
+        strcpy(weather_text, "\xef\x80\x8a\x0a\x00");
       }
       else if (strcmp("13n", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_13n);
+        strcpy(weather_text, "\xef\x80\xb8\x0a\x00");
       }
       else if (strcmp("50d", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_50d);
+        strcpy(weather_text, "\xef\x80\x83\x0a\x00");
       }
       else if (strcmp("50n", new_tuple->value->cstring) == 0)
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_50n);
+        strcpy(weather_text, "\xef\x81\x8a\x0a\x00");
       }
       else
       {
-        icon_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_WEATHER_00);
+        strcpy(weather_text, "\xef\x81\x8c\x0a\x00");
       }
 
-      bitmap_layer_set_bitmap(icon_layer, icon_bitmap);
-      layer_mark_dirty(bitmap_layer_get_layer(icon_layer));
+      text_layer_set_text(icon_layer, weather_text);
       break;
 
     case WEATHER_TEMPERATURE_KEY:
@@ -515,8 +512,14 @@ static void init() {
   layer_add_child(window_layer, text_layer_get_layer(date_layer));
 
   //WEATHER ICON
-  icon_layer = bitmap_layer_create(GRect(5, 90, 60, 60));
-  layer_add_child(window_layer, bitmap_layer_get_layer(icon_layer));
+  GFont custom_font_weather_icon = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_WEATHER_ICON_40));
+  icon_layer = text_layer_create(GRect(5, 90, 60, 60));
+  text_layer_set_text_alignment(icon_layer, GTextAlignmentCenter);
+  text_layer_set_font(icon_layer, custom_font_weather_icon);
+  text_layer_set_background_color(icon_layer, GColorClear);
+  text_layer_set_text_color(icon_layer, GColorWhite);
+
+  layer_add_child(window_layer, text_layer_get_layer(icon_layer));
 
   //THERM
   therm_layer = bitmap_layer_create(GRect(65, 102, 16, 36));
@@ -620,7 +623,7 @@ static void deinit() {
   gbitmap_destroy(battery_bitmap);
   bitmap_layer_destroy(battery_layer);
   gbitmap_destroy(icon_bitmap);
-  bitmap_layer_destroy(icon_layer);
+  text_layer_destroy(icon_layer);
   gbitmap_destroy(therm_bitmap);
   bitmap_layer_destroy(therm_layer);
   window_destroy(window);
