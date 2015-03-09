@@ -63,7 +63,8 @@ function fetchWeather(latitude, longitude) {
         Pebble.sendAppMessage({
           "icon":icon,
           "temperature":temperature.toString(),
-          "location":location}, sendToWatchSuccess, sendToWatchFail);
+          "location":location,
+          "scale":tempScale}, sendToWatchSuccess, sendToWatchFail);
 
       }
       else
@@ -98,7 +99,8 @@ function locationError(err) {
   Pebble.sendAppMessage({
     "icon":"00",
     "temperature":"--",
-    "location":"LocErr: " + errCode
+    "location":"LocErr: " + errCode,
+    "scale":"F"
   });
 }
 
@@ -138,6 +140,7 @@ function applyAndStoreConfigOptions(inOptions)
     {
       localStorage.setItem('tempScale', inOptions.tempScale);
       tempScale = inOptions.tempScale;
+      Pebble.sendAppMessage({"scale":tempScale});
     }
     if (inOptions.tempCorrect !== null && !isNaN(inOptions.tempCorrect))
     {

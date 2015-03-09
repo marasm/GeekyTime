@@ -14,16 +14,17 @@ static TextLayer *date_layer;
 static TextLayer *temp_layer;
 static TextLayer *weather_loc_layer;
 
+static char temp_text[10];
+static char temp_num[4]= "100";
+static char temp_scale[2]= "F";
+
 static BitmapLayer *bt_layer;
 static BitmapLayer *comm_layer;
 static BitmapLayer *battery_layer;
 static TextLayer *icon_layer;
-static BitmapLayer *therm_layer;
 static GBitmap *bt_bitmap = NULL;
 static GBitmap *comm_bitmap = NULL;
 static GBitmap *battery_bitmap = NULL;
-static GBitmap *icon_bitmap = NULL;
-static GBitmap *therm_bitmap = NULL;
 
 static GFont custom_font_temp_30;
 static GFont custom_font_temp_40;
@@ -32,11 +33,13 @@ static bool bt_connected = 1;
 static AppSync sync;
 static uint8_t sync_buffer[64];
 static bool bt_vibrate = 1;
+static bool fetch_in_progress= false;
 
 enum TupleKey {
   WEATHER_ICON_KEY = 0x0,         // TUPLE_CSTRING
   WEATHER_TEMPERATURE_KEY = 0x1,  // TUPLE_CSTRING
   WEATHER_LOCATION_KEY = 0x2,     // TUPLE_CSTRING
+  WEATHER_SCALE_KEY = 0x4,
   CONFIG_BT_VIBRATE = 0x64        // TUPLE_CSTRING (100 in decimal)
 };
 
@@ -147,84 +150,85 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "CallBack. Key=%i", (int)key);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Callback. Tuple Value=%s", new_tuple->value->cstring);
-  static char weather_text[]= {0xef, 0x81, 0x8c, 0x0a, 0x00};
+  static char weather_text[]= {0xef, 0x80, 0xbe, 0x00};
+
   switch (key) {
     case WEATHER_ICON_KEY:
       if (strcmp("01d", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x81\x8c\x0a\x00");
+        strcpy(weather_text, "\xef\x81\x8c\x00");
       }
       else if (strcmp("01n", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\xae\x0a\x00");
+        strcpy(weather_text, "\xef\x80\xae\x00");
       }
       else if (strcmp("02d", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\x82\x0a\x00");
+        strcpy(weather_text, "\xef\x80\x82\x00");
       }
       else if (strcmp("02n", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\xb1\x0a\x00");
+        strcpy(weather_text, "\xef\x80\xb1\x00");
       }
       else if (strcmp("03d", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x81\x81\x0a\x00");
+        strcpy(weather_text, "\xef\x81\x81\x00");
       }
       else if (strcmp("03n", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x81\x81\x0a\x00");
+        strcpy(weather_text, "\xef\x81\x81\x00");
       }
       else if (strcmp("04d", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\x93\x0a\x00");
+        strcpy(weather_text, "\xef\x80\x93\x00");
       }
       else if (strcmp("04n", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\x93\x0a\x00");
+        strcpy(weather_text, "\xef\x80\x93\x00");
       }
       else if (strcmp("09d", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\x89\x0a\x00");
+        strcpy(weather_text, "\xef\x80\x89\x00");
       }
       else if (strcmp("09n", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\xb7\x0a\x00");
+        strcpy(weather_text, "\xef\x80\xb7\x00");
       }
       else if (strcmp("10d", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\x88\x0a\x00");
+        strcpy(weather_text, "\xef\x80\x88\x00");
       }
       else if (strcmp("10n", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\xb6\x0a\x00");
+        strcpy(weather_text, "\xef\x80\xb6\x00");
       }
       else if (strcmp("11d", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\x85\x0a\x00");
+        strcpy(weather_text, "\xef\x80\x85\x00");
       }
       else if (strcmp("11n", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\xb3\x0a\x00");
+        strcpy(weather_text, "\xef\x80\xb3\x00");
       }
       else if (strcmp("13d", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\x8a\x0a\x00");
+        strcpy(weather_text, "\xef\x80\x8a\x00");
       }
       else if (strcmp("13n", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\xb8\x0a\x00");
+        strcpy(weather_text, "\xef\x80\xb8\x00");
       }
       else if (strcmp("50d", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x80\x83\x0a\x00");
+        strcpy(weather_text, "\xef\x80\x83\x00");
       }
       else if (strcmp("50n", new_tuple->value->cstring) == 0)
       {
-        strcpy(weather_text, "\xef\x81\x8a\x0a\x00");
+        strcpy(weather_text, "\xef\x81\x8a\x00");
       }
       else
       {
-        strcpy(weather_text, "\xef\x81\x8c\x0a\x00");
+        strcpy(weather_text, "\xef\x80\xbe\x00");
       }
 
       text_layer_set_text(icon_layer, weather_text);
@@ -243,7 +247,12 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
           APP_LOG(APP_LOG_LEVEL_DEBUG, "2 digit temp detected. Setting font to 40");
           text_layer_set_font(temp_layer, custom_font_temp_40);
         }
-        text_layer_set_text(temp_layer, new_tuple->value->cstring);
+        strncpy(temp_num, new_tuple->value->cstring, 3);
+        strncpy(temp_text, temp_num, 3);
+        strcat(temp_text, "°");
+        strncat(temp_text, temp_scale, 1);
+        text_layer_set_text(temp_layer, temp_text);
+        fetch_in_progress= false;
       }
       else
       {
@@ -274,6 +283,21 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
       layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
       break;
+    case WEATHER_SCALE_KEY:
+      if (strcmp(new_tuple->value->cstring, "C") == 0)
+      {
+        strcpy(temp_scale, "C");
+      }
+      else
+      {
+        strcpy(temp_scale, "F");
+      }
+      strcpy(temp_text, temp_num);
+      strcat(temp_text, "°");
+      strcat(temp_text, temp_scale);
+      text_layer_set_text(temp_layer, temp_text);
+      break;
+
     case CONFIG_BT_VIBRATE:
       if (strcmp(new_tuple->value->cstring, "On") == 0)
       {
@@ -431,11 +455,14 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
 
   }
   //if the temp has not been refreshed yet ("--") do it no
-  if(temp_layer && 
+  //TODO: happens every second whilst waiting on http, reduce this
+  if(temp_layer &&
+     !fetch_in_progress &&
      text_layer_get_text(temp_layer) != NULL &&
-     strcmp("--", text_layer_get_text(temp_layer)) == 0)
+     strncmp("--", text_layer_get_text(temp_layer), 2) == 0)
   {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Default temp of -- detected during minute tick. Request weather refresh");
+    fetch_in_progress= true;
     send_cmd();
   }
   
@@ -512,8 +539,8 @@ static void init() {
   layer_add_child(window_layer, text_layer_get_layer(date_layer));
 
   //WEATHER ICON
-  GFont custom_font_weather_icon = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_WEATHER_ICON_40));
-  icon_layer = text_layer_create(GRect(5, 90, 60, 60));
+  GFont custom_font_weather_icon = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_WEATHER_ICON_30));
+  icon_layer = text_layer_create(GRect(5, 95, 60, 60));
   text_layer_set_text_alignment(icon_layer, GTextAlignmentCenter);
   text_layer_set_font(icon_layer, custom_font_weather_icon);
   text_layer_set_background_color(icon_layer, GColorClear);
@@ -521,18 +548,11 @@ static void init() {
 
   layer_add_child(window_layer, text_layer_get_layer(icon_layer));
 
-  //THERM
-  therm_layer = bitmap_layer_create(GRect(65, 102, 16, 36));
-  therm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_THERM);
-  bitmap_layer_set_bitmap(therm_layer, therm_bitmap);
-
-  layer_add_child(window_layer, bitmap_layer_get_layer(therm_layer));
-
   //TEMP
   custom_font_temp_30 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
-  custom_font_temp_40 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_42));
+  custom_font_temp_40 = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TEMP_30));
 
-  temp_layer = text_layer_create(GRect(81, 95, 144-85 /* width */, 55 /* 168 max height */));
+  temp_layer = text_layer_create(GRect(60, 95, 144-65 /* width */, 60 /* 168 max height */));
   text_layer_set_font(temp_layer, custom_font_temp_40);
   text_layer_set_text_alignment(temp_layer, GTextAlignmentCenter);
   text_layer_set_background_color(temp_layer, GColorClear);
@@ -594,6 +614,7 @@ static void init() {
     TupletCString(WEATHER_ICON_KEY, "00"),
     TupletCString(WEATHER_TEMPERATURE_KEY, "--"),
     TupletCString(WEATHER_LOCATION_KEY, "Unknown"),
+    TupletCString(WEATHER_SCALE_KEY, "F"),
     TupletCString(CONFIG_BT_VIBRATE, bt_vibrate_str)
   };
 
@@ -622,10 +643,7 @@ static void deinit() {
   bitmap_layer_destroy(bt_layer);
   gbitmap_destroy(battery_bitmap);
   bitmap_layer_destroy(battery_layer);
-  gbitmap_destroy(icon_bitmap);
   text_layer_destroy(icon_layer);
-  gbitmap_destroy(therm_bitmap);
-  bitmap_layer_destroy(therm_layer);
   window_destroy(window);
 }
 

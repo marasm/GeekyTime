@@ -3,7 +3,8 @@
     "btVibrate": 100,
     "icon": 0,
     "location": 2,
-    "temperature": 1
+    "temperature": 1,
+    "scale": 4
   },
   "capabilities": [
     "location",
@@ -81,7 +82,7 @@
       },
       {
         "file": "fonts/Braciola MS ExB.ttf",
-        "name": "FONT_TEMP_42",
+        "name": "FONT_TEMP_40",
         "type": "font"
       },
       {
@@ -111,7 +112,7 @@
       },
       {
         "file": "fonts/weathericons-regular-webfont.ttf",
-        "name": "FONT_WEATHER_ICON_40",
+        "name": "FONT_WEATHER_ICON_30",
         "type": "font"
       },
       {
