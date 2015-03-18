@@ -172,7 +172,7 @@
             },
             {
                 "file": "fonts/Oblivious.ttf",
-                "name": "FONT_LOCATION_10",
+                "name": "FONT_TINY_10",
                 "type": "font"
             },
             {
@@ -193,11 +193,6 @@
             {
                 "file": "fonts/Oblivious.ttf",
                 "name": "FONT_TIME_42",
-                "type": "font"
-            },
-            {
-                "file": "fonts/Oblivious.ttf",
-                "name": "FONT_BAT_PERC_10",
                 "type": "font"
             }
         ]

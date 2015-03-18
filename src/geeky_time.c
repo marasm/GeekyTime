@@ -479,7 +479,7 @@ static void init() {
   layer_add_child(window_layer, bitmap_layer_get_layer(bt_layer));
 
   //BATTERY PERCENT
-  GFont custom_font_bat_perc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_BAT_PERC_10));
+  GFont custom_font_bat_perc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TINY_10));
   bat_perc_layer = text_layer_create(GRect(65, 1, 33, 15));
   text_layer_set_font(bat_perc_layer, custom_font_bat_perc);
   text_layer_set_text_color(bat_perc_layer, GColorWhite);
@@ -536,7 +536,7 @@ static void init() {
   layer_add_child(window_layer, text_layer_get_layer(temp_layer));
 
   //WEATHER LOCATION
-  GFont custom_font_weather_loc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_LOCATION_10));
+  GFont custom_font_weather_loc = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TINY_10));
   weather_loc_layer = text_layer_create(GRect(10, 145, 134 /* width */, 18 /* 168 max height */));
   text_layer_set_text_alignment(weather_loc_layer, GTextAlignmentCenter);
   text_layer_set_font(weather_loc_layer, custom_font_weather_loc);
