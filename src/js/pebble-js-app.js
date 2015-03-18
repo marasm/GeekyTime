@@ -168,7 +168,7 @@ Pebble.addEventListener("ready",
                           {
                             console.log("JS - performing init tasks" + e.ready);
                             initConfigOptions();
-                            //navigator.geolocation.watchPosition(locationSuccess, locationError, locationOptions);
+                            navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                             initDone = true;
                           }
                         });
