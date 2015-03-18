@@ -237,7 +237,7 @@
                 "type": "png"
             },
             {
-                "file": "data/bt_off.png",
+                "file": "images/bt_off.png",
                 "name": "IMG_BT_OFF",
                 "type": "raw"
             },
@@ -247,7 +247,7 @@
                 "type": "png"
             },
             {
-                "file": "data/comm_off.png",
+                "file": "images/comm_off.png",
                 "name": "IMG_COMM_OFF",
                 "type": "raw"
             },
