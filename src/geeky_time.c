@@ -375,7 +375,7 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       {
         gbitmap_destroy(comm_bitmap);
       }
-      comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_OFF);
+      comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_ICON_CLEAR);
       bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
       layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
       break;
@@ -469,7 +469,7 @@ static void handle_bluetooth(bool connected) {
   }
   else
   {
-    bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_BT_OFF);
+    bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_ICON_CLEAR);
     if (bt_connected)
     {
       bt_connected = 0;
