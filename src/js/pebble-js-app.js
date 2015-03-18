@@ -163,13 +163,13 @@ var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minut
 
 Pebble.addEventListener("ready",
                         function(e) {
-                          console.log("JS - ready called" + e.ready);
+                          console.log("JS - ready called " + e.ready);
                           if (!initDone)
                           {
                             console.log("JS - performing init tasks" + e.ready);
                             initConfigOptions();
-                            navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                             initDone = true;
+                            navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
                           }
                         });
 
