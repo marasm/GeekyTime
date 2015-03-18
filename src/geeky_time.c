@@ -460,6 +460,16 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
 
 static void init() {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Entering Init");
+  
+  if (is_color_supported)
+  {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Running on Color Pebble");
+  }
+  else
+  {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Running on Classic Pebble");
+  }
+  
   window = window_create();
   window_stack_push(window, true /* Animated */);
   window_set_background_color(window, GColorBlack);
