@@ -16,7 +16,7 @@ function parseWeatherResponse() {
   if (this.readyState == 4) {
     if(this.status == 200) {
       console.log(this.responseText);
-      response = JSON.parse(this.responseText);
+      var response = JSON.parse(this.responseText);
       var temperature = '--';
       var temperatureC = '--';
       var temperatureF = '--';
@@ -70,7 +70,6 @@ function parseWeatherResponse() {
 function fetchWeatherForCoords(latitude, longitude) {
   console.log("JS fetch weather from web for coords: " + latitude + "," +
     longitude);
-  var response;
   var req = new XMLHttpRequest();
   req.open('GET', "http://api.openweathermap.org/data/2.5/weather?" +
     "lat=" + latitude + "&lon=" + longitude, true);
