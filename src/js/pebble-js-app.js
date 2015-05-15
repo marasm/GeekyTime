@@ -12,72 +12,75 @@ function sendToWatchFail(e)
   console.log("Message sending failed: " + e.error.message);
 }
 
-function fetchWeather(latitude, longitude) {
-  console.log("JS About to fetch weather from web...");
+function parseWeatherResponse() {
+  if (this.readyState == 4) {
+    if(this.status == 200) {
+      console.log(this.responseText);
+      response = JSON.parse(this.responseText);
+      var temperature = '--';
+      var temperatureC = '--';
+      var temperatureF = '--';
+      var icon = '00';
+      var location = 'Unknown';
+      if (response && response.weather && response.weather.length > 0) {
+        var weatherResult = response.weather[0];
+        icon = weatherResult.icon;
+      }
+      if (response && response.main && response.main.temp !== null &&
+          response.main.temp != 'undefined' && response.main.temp !== '' &&
+          !isNaN(response.main.temp)) {
+        temperatureC = response.main.temp - 273.15;
+        console.log('temp C before correction=' + temperatureC);
+        console.log('temp Correction=' + tempCorrect);
+        temperatureC = Math.round(temperatureC + tempCorrect);
+        console.log('temp C after correction=' + temperatureC);
+        temperatureF = Math.round(temperatureC * 9 / 5 + 32);
+        //assign temp based on settings
+        if (tempScale == 'C')
+        {
+          temperature = temperatureC;
+        }
+        else
+        {
+          temperature = temperatureF;
+        }
+      }
+      if (response && response.name ) {
+        location = response.name;
+      }
+      console.log('Icon=' + icon);
+      console.log('Temp=' + temperature);
+      console.log('Temp C=' + temperatureC);
+      console.log('Temp F=' + temperatureF);
+      console.log('Location=' + location);
+
+      Pebble.sendAppMessage({
+        "icon":icon,
+        "temperature":temperature.toString(),
+        "location":location}, sendToWatchSuccess, sendToWatchFail);
+
+    }
+    else
+    {
+      console.log("HTTP Error = " + this.status);
+    }
+  }
+}
+
+function fetchWeatherForCoords(latitude, longitude) {
+  console.log("JS fetch weather from web for coords: " + latitude + "," +
+    longitude);
   var response;
   var req = new XMLHttpRequest();
   req.open('GET', "http://api.openweathermap.org/data/2.5/weather?" +
     "lat=" + latitude + "&lon=" + longitude, true);
-  req.onload = function(e) {
-    if (req.readyState == 4) {
-      if(req.status == 200) {
-        console.log(req.responseText);
-        response = JSON.parse(req.responseText);
-        var temperature = '--';
-        var temperatureC = '--';
-        var temperatureF = '--';
-        var icon = '00';
-        var location = 'Unknown';
-        if (response && response.weather && response.weather.length > 0) {
-          var weatherResult = response.weather[0];
-          icon = weatherResult.icon;
-        }
-        if (response && response.main && response.main.temp !== null &&
-            response.main.temp != 'undefined' && response.main.temp !== '' &&
-            !isNaN(response.main.temp)) {
-          temperatureC = response.main.temp - 273.15;
-          console.log('temp C before correction=' + temperatureC);
-          console.log('temp Correction=' + tempCorrect);
-          temperatureC = Math.round(temperatureC + tempCorrect);
-          console.log('temp C after correction=' + temperatureC);
-          temperatureF = Math.round(temperatureC * 9 / 5 + 32);
-          //assign temp based on settings
-          if (tempScale == 'C')
-          {
-            temperature = temperatureC;
-          }
-          else
-          {
-            temperature = temperatureF;
-          }
-        }
-        if (response && response.name ) {
-          location = response.name;
-        }
-        console.log('Icon=' + icon);
-        console.log('Temp=' + temperature);
-        console.log('Temp C=' + temperatureC);
-        console.log('Temp F=' + temperatureF);
-        console.log('Location=' + location);
-
-        Pebble.sendAppMessage({
-          "icon":icon,
-          "temperature":temperature.toString(),
-          "location":location}, sendToWatchSuccess, sendToWatchFail);
-
-      }
-      else
-      {
-        console.log("HTTP Error = " + req.status);
-      }
-    }
-  };
+  req.onload = parseWeatherResponse;
   req.send(null);
 }
 
 function locationSuccess(pos) {
   var coordinates = pos.coords;
-  fetchWeather(coordinates.latitude, coordinates.longitude);
+  fetchWeatherForCoords(coordinates.latitude, coordinates.longitude);
 }
 
 function locationError(err) {
