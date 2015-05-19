@@ -11,7 +11,7 @@ function sendToWatchSuccess(e)
 }
 function sendToWatchFail(e)
 {
-  console.log("Message sending failed: " + e.error.message);
+  console.log("Message sending failed: " + e);
 }
 
 function parseWeatherResponse() {

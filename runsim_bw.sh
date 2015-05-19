@@ -1,3 +1,3 @@
 pebble build
 
-pebble install --emulator aplite --logs
+pebble install --emulator aplite $@

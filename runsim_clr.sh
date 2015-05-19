@@ -1,3 +1,3 @@
 pebble build
 
-pebble install --emulator basalt --logs
+pebble install --emulator basalt $@
