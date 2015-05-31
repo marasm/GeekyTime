@@ -2,6 +2,8 @@ var initDone = false;
 var tempScale = 'F';
 var tempCorrect = 0;
 var btVibrate = 'On';
+var autoLocation = 'On';
+var manLocation = '';
 
 function sendToWatchSuccess(e)
 {
@@ -9,75 +11,88 @@ function sendToWatchSuccess(e)
 }
 function sendToWatchFail(e)
 {
-  console.log("Message sending failed: " + e.error.message);
+  console.log("Message sending failed: " + e);
 }
 
-function fetchWeather(latitude, longitude) {
-  console.log("JS About to fetch weather from web...");
-  var response;
+function parseWeatherResponse() {
+  if (this.readyState == 4) {
+    if(this.status == 200) {
+      console.log(this.responseText);
+      var response = JSON.parse(this.responseText);
+      var temperature = '--';
+      var temperatureC = '--';
+      var temperatureF = '--';
+      var icon = '00';
+      var location = 'Unknown';
+      if (response && response.weather && response.weather.length > 0) {
+        var weatherResult = response.weather[0];
+        icon = weatherResult.icon;
+      }
+      if (response && response.main && response.main.temp !== null &&
+          response.main.temp != 'undefined' && response.main.temp !== '' &&
+          !isNaN(response.main.temp)) {
+        temperatureC = response.main.temp - 273.15;
+        console.log('temp C before correction=' + temperatureC);
+        console.log('temp Correction=' + tempCorrect);
+        temperatureC = Math.round(temperatureC + tempCorrect);
+        console.log('temp C after correction=' + temperatureC);
+        temperatureF = Math.round(temperatureC * 9 / 5 + 32);
+        //assign temp based on settings
+        if (tempScale == 'C')
+        {
+          temperature = temperatureC;
+        }
+        else
+        {
+          temperature = temperatureF;
+        }
+      }
+      if (response && response.name ) {
+        location = response.name;
+      }
+      console.log('Icon=' + icon);
+      console.log('Temp=' + temperature);
+      console.log('Temp C=' + temperatureC);
+      console.log('Temp F=' + temperatureF);
+      console.log('Location=' + location);
+
+      Pebble.sendAppMessage({
+        "icon":icon,
+        "temperature":temperature.toString(),
+        "location":location}, sendToWatchSuccess, sendToWatchFail);
+
+    }
+    else
+    {
+      console.log("HTTP Error = " + this.status);
+    }
+  }
+}
+
+function fetchWeatherForCoords(latitude, longitude) {
+  console.log("JS fetch weather from web for coords: " + latitude + "," +
+    longitude);
   var req = new XMLHttpRequest();
   req.open('GET', "http://api.openweathermap.org/data/2.5/weather?" +
     "lat=" + latitude + "&lon=" + longitude, true);
-  req.onload = function(e) {
-    if (req.readyState == 4) {
-      if(req.status == 200) {
-        console.log(req.responseText);
-        response = JSON.parse(req.responseText);
-        var temperature = '--';
-        var temperatureC = '--';
-        var temperatureF = '--';
-        var icon = '00';
-        var location = 'Unknown';
-        if (response && response.weather && response.weather.length > 0) {
-          var weatherResult = response.weather[0];
-          icon = weatherResult.icon;
-        }
-        if (response && response.main && response.main.temp !== null &&
-            response.main.temp != 'undefined' && response.main.temp !== '' &&
-            !isNaN(response.main.temp)) {
-          temperatureC = response.main.temp - 273.15;
-          console.log('temp C before correction=' + temperatureC);
-          console.log('temp Correction=' + tempCorrect);
-          temperatureC = Math.round(temperatureC + tempCorrect);
-          console.log('temp C after correction=' + temperatureC);
-          temperatureF = Math.round(temperatureC * 9 / 5 + 32);
-          //assign temp based on settings
-          if (tempScale == 'C')
-          {
-            temperature = temperatureC;
-          }
-          else
-          {
-            temperature = temperatureF;
-          }
-        }
-        if (response && response.name ) {
-          location = response.name;
-        }
-        console.log('Icon=' + icon);
-        console.log('Temp=' + temperature);
-        console.log('Temp C=' + temperatureC);
-        console.log('Temp F=' + temperatureF);
-        console.log('Location=' + location);
+  req.onload = parseWeatherResponse;
+  req.send(null);
+}
 
-        Pebble.sendAppMessage({
-          "icon":icon,
-          "temperature":temperature.toString(),
-          "location":location}, sendToWatchSuccess, sendToWatchFail);
 
-      }
-      else
-      {
-        console.log("HTTP Error = " + req.status);
-      }
-    }
-  };
+function fetchWeatherForStaticLocation(locationString) {
+  console.log("JS fetch weather from web for static location: " +
+      locationString);
+  var req = new XMLHttpRequest();
+  req.open('GET', "http://api.openweathermap.org/data/2.5/weather?" +
+    "q=" + locationString, true);
+  req.onload = parseWeatherResponse;
   req.send(null);
 }
 
 function locationSuccess(pos) {
   var coordinates = pos.coords;
-  fetchWeather(coordinates.latitude, coordinates.longitude);
+  fetchWeatherForCoords(coordinates.latitude, coordinates.longitude);
 }
 
 function locationError(err) {
@@ -127,6 +142,21 @@ function initConfigOptions()
     btVibrate = btVibrateLS;
     console.log("Assigned btVibrate from storage=" + btVibrateLS);
   }
+
+  var autoLocationLS = localStorage.getItem('autoLocation');
+  if(autoLocationLS != null && autoLocationLS != 'undefined' &&
+     autoLocationLS.trim().length > 0)
+  {
+    autoLocation = autoLocationLS;
+    console.log("Assigned autoLocation from storage=" + autoLocationLS);
+  }
+  var manLocationLS = localStorage.getItem('manLocation');
+  if(manLocationLS != null && manLocationLS != 'undefined' &&
+     manLocationLS.trim().length > 0)
+  {
+    manLocation = manLocationLS;
+    console.log("Assigned manLocation from storage=" + manLocationLS);
+  }
 }
 
 function applyAndStoreConfigOptions(inOptions)
@@ -144,6 +174,16 @@ function applyAndStoreConfigOptions(inOptions)
       localStorage.setItem('tempCorrect', inOptions.tempCorrect);
       tempCorrect = parseFloat(inOptions.tempCorrect);
     }
+    if (inOptions.autoLocation !== null && inOptions.autoLocation.trim().length > 0)
+    {
+      localStorage.setItem('autoLocation', inOptions.autoLocation);
+      autoLocation = inOptions.autoLocation;
+    }
+    if (inOptions.manLocation !== null && inOptions.manLocation.trim().length > 0)
+    {
+      localStorage.setItem('manLocation', inOptions.manLocation);
+      autoLocation = inOptions.manLocation;
+    }
 
     //this option is applicable to watch app only so store and send to watch
     if (inOptions.btVibrate !== null && inOptions.btVibrate.length > 0)
@@ -160,6 +200,17 @@ function applyAndStoreConfigOptions(inOptions)
 
 var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minutes
 
+function getAppropriateWeatherData()
+{
+  if ('On' === autoLocation)
+  {
+    navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+  }
+  else
+  {
+    fetchWeatherForStaticLocation(manLocation);
+  }
+}
 
 Pebble.addEventListener("ready",
                         function(e) {
@@ -169,13 +220,13 @@ Pebble.addEventListener("ready",
                             console.log("JS - performing init tasks" + e.ready);
                             initConfigOptions();
                             initDone = true;
-                            navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                            getAppropriateWeatherData();
                           }
                         });
 
 Pebble.addEventListener("appmessage",
                         function(e) {
-                          navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                          getAppropriateWeatherData();
                           console.log(e.type);
                         });
 
@@ -185,12 +236,12 @@ Pebble.addEventListener("webviewclosed",
                          var options = JSON.parse(decodeURIComponent(e.response));
                          console.log("Options = " + JSON.stringify(options));
                          applyAndStoreConfigOptions(options);
-                         navigator.geolocation.getCurrentPosition(locationSuccess, locationError, locationOptions);
+                         getAppropriateWeatherData();
                          });
 
 Pebble.addEventListener("showConfiguration",
                          function() {
-                         console.log("showing configuration");
+                         console.log("showing configuration +");
                          initConfigOptions();
-                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate);
+                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate + '&autoLocation=' + autoLocation + '&manLocation=' + manLocation + '&allowLocSelect=true');
                          });
