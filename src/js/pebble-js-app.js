@@ -2,6 +2,7 @@ var initDone = false;
 var tempScale = 'F';
 var tempCorrect = 0;
 var btVibrate = 'On';
+var dateFormat = 'mmdd';
 var autoLocation = 'On';
 var manLocation = '';
 
@@ -59,8 +60,7 @@ function parseWeatherResponse() {
       Pebble.sendAppMessage({
         "icon":icon,
         "temperature":temperature.toString(),
-        "location":location,
-        "btVibrate" : btVibrate}, sendToWatchSuccess, sendToWatchFail);
+        "location":location}, sendToWatchSuccess, sendToWatchFail);
 
     }
     else
@@ -143,6 +143,13 @@ function initConfigOptions()
     btVibrate = btVibrateLS;
     console.log("Assigned btVibrate from storage=" + btVibrateLS);
   }
+  
+  var dateFormatLS = localStorage.getItem('dateFormat');
+  if (dateFormatLS !== null && dateFormatLS != 'undefined' && dateFormatLS.length > 0)
+  {
+    dateFormat = dateFormatLS;
+    console.log("Assigned dateFormat from storage=" + dateFormatLS);
+  }
 
   var autoLocationLS = localStorage.getItem('autoLocation');
   if(autoLocationLS !== null && autoLocationLS != 'undefined' &&
@@ -166,7 +173,7 @@ function applyAndStoreConfigOptions(inOptions)
 {
   if (inOptions !== null && inOptions != 'undefined')
   {
-    //these 2 options are for the JS running on the phone
+    //these options are for the JS running on the phone
     if (inOptions.tempScale !== null && inOptions.tempScale.length == 1)
     {
       localStorage.setItem('tempScale', inOptions.tempScale);
@@ -193,8 +200,14 @@ function applyAndStoreConfigOptions(inOptions)
     {
       localStorage.setItem('btVibrate', inOptions.btVibrate);
       btVibrate = inOptions.btVibrate;
-      sendWatchConfigToWatch();
     }
+
+    if (inOptions.dateFormat !== null && inOptions.dateFormat.length > 0)
+    {
+      localStorage.setItem('dateFormat', inOptions.dateFormat);
+      dateFormat = inOptions.dateFormat;
+    }
+    sendWatchConfigToWatch();
   }
 }
 
@@ -203,7 +216,8 @@ function sendWatchConfigToWatch()
 {
   console.log('Sending btVibrate=' + btVibrate + " to the watch");
   Pebble.sendAppMessage({
-    "btVibrate" : btVibrate
+    "btVibrate" : btVibrate,
+    "dateFormat" : dateFormat
   });
 }
 
@@ -252,5 +266,5 @@ Pebble.addEventListener("showConfiguration",
                          function() {
                          console.log("showing configuration +");
                          initConfigOptions();
-                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate + '&autoLocation=' + autoLocation + '&manLocation=' + manLocation + '&allowLocSelect=true');
+                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate + '&dateFormat=' + dateFormat + '&autoLocation=' + autoLocation + '&manLocation=' + manLocation + '&allowLocSelect=true');
                          });

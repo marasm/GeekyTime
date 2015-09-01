@@ -1,6 +1,7 @@
 {
     "appKeys": {
         "btVibrate": 100,
+        "dateFormat": 101,
         "icon": 0,
         "location": 2,
         "temperature": 1
