@@ -59,7 +59,8 @@ function parseWeatherResponse() {
       Pebble.sendAppMessage({
         "icon":icon,
         "temperature":temperature.toString(),
-        "location":location}, sendToWatchSuccess, sendToWatchFail);
+        "location":location,
+        "btVibrate" : btVibrate}, sendToWatchSuccess, sendToWatchFail);
 
     }
     else
@@ -144,19 +145,21 @@ function initConfigOptions()
   }
 
   var autoLocationLS = localStorage.getItem('autoLocation');
-  if(autoLocationLS != null && autoLocationLS != 'undefined' &&
+  if(autoLocationLS !== null && autoLocationLS != 'undefined' &&
      autoLocationLS.trim().length > 0)
   {
     autoLocation = autoLocationLS;
     console.log("Assigned autoLocation from storage=" + autoLocationLS);
   }
   var manLocationLS = localStorage.getItem('manLocation');
-  if(manLocationLS != null && manLocationLS != 'undefined' &&
+  if(manLocationLS !== null && manLocationLS != 'undefined' &&
      manLocationLS.trim().length > 0)
   {
     manLocation = manLocationLS;
     console.log("Assigned manLocation from storage=" + manLocationLS);
   }
+  
+  sendWatchConfigToWatch();
 }
 
 function applyAndStoreConfigOptions(inOptions)
@@ -190,12 +193,18 @@ function applyAndStoreConfigOptions(inOptions)
     {
       localStorage.setItem('btVibrate', inOptions.btVibrate);
       btVibrate = inOptions.btVibrate;
-      console.log('Sending btVibrate=' + btVibrate + " to the watch");
-      Pebble.sendAppMessage({
-        "btVibrate" : btVibrate
-      });
+      sendWatchConfigToWatch();
     }
   }
+}
+
+//this function will send all the watch config options back to the watch (btVibrate, dateFormat and etc.)
+function sendWatchConfigToWatch()
+{
+  console.log('Sending btVibrate=' + btVibrate + " to the watch");
+  Pebble.sendAppMessage({
+    "btVibrate" : btVibrate
+  });
 }
 
 var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minutes

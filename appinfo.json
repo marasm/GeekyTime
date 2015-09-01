@@ -15,43 +15,8 @@
     "resources": {
         "media": [
             {
-                "file": "fonts/Oblivious.ttf",
-                "name": "FONT_TIME_42",
-                "type": "font"
-            },
-            {
-                "file": "fonts/Oblivious.ttf",
-                "name": "FONT_DATE_22",
-                "type": "font"
-            },
-            {
-                "file": "fonts/Oblivious.ttf",
-                "name": "FONT_TEMP_30",
-                "type": "font"
-            },
-            {
-                "file": "fonts/Oblivious.ttf",
-                "name": "FONT_TEMP_40",
-                "type": "font"
-            },
-            {
-                "file": "fonts/Oblivious.ttf",
-                "name": "FONT_TINY_10",
-                "type": "font"
-            },
-            {
-                "file": "images/battery_100.png",
-                "name": "IMG_BATTERY_100",
-                "type": "png"
-            },
-            {
-                "file": "images/battery_80.png",
-                "name": "IMG_BATTERY_80",
-                "type": "png"
-            },
-            {
-                "file": "images/battery_60.png",
-                "name": "IMG_BATTERY_60",
+                "file": "images/weather_icn_11d.png",
+                "name": "IMG_WEATHER_11d",
                 "type": "png"
             },
             {
@@ -60,68 +25,13 @@
                 "type": "png"
             },
             {
-                "file": "images/battery_20.png",
-                "name": "IMG_BATTERY_20",
+                "file": "images/battery_100.png",
+                "name": "IMG_BATTERY_100",
                 "type": "png"
             },
             {
-                "file": "images/battery_chrg.png",
-                "name": "IMG_BATTERY_CHRG",
-                "type": "png"
-            },
-            {
-                "file": "images/bt_on.png",
-                "name": "IMG_BT_ON",
-                "type": "png"
-            },
-            {
-                "file": "images/comm_on.png",
-                "name": "IMG_COMM_ON",
-                "type": "png"
-            },
-            {
-                "file": "images/icon_clear.png",
-                "name": "IMG_ICON_CLEAR",
-                "type": "png"
-            },
-            {
-                "file": "images/comm_err.png",
-                "name": "IMG_COMM_ERR",
-                "type": "png"
-            },
-            {
-                "file": "images/weather_icn_00.png",
-                "name": "IMG_WEATHER_00",
-                "type": "png"
-            },
-            {
-                "file": "images/weather_icn_01d.png",
-                "name": "IMG_WEATHER_01d",
-                "type": "png"
-            },
-            {
-                "file": "images/weather_icn_01n.png",
-                "name": "IMG_WEATHER_01n",
-                "type": "png"
-            },
-            {
-                "file": "images/weather_icn_02d.png",
-                "name": "IMG_WEATHER_02d",
-                "type": "png"
-            },
-            {
-                "file": "images/weather_icn_02n.png",
-                "name": "IMG_WEATHER_02n",
-                "type": "png"
-            },
-            {
-                "file": "images/weather_icn_03d.png",
-                "name": "IMG_WEATHER_03d",
-                "type": "png"
-            },
-            {
-                "file": "images/weather_icn_03n.png",
-                "name": "IMG_WEATHER_03n",
+                "file": "images/weather_icn_50n.png",
+                "name": "IMG_WEATHER_50n",
                 "type": "png"
             },
             {
@@ -130,8 +40,23 @@
                 "type": "png"
             },
             {
-                "file": "images/weather_icn_04n.png",
-                "name": "IMG_WEATHER_04n",
+                "file": "images/weather_icn_03n.png",
+                "name": "IMG_WEATHER_03n",
+                "type": "png"
+            },
+            {
+                "file": "images/bt_on.png",
+                "name": "IMG_BT_ON",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_13n.png",
+                "name": "IMG_WEATHER_13n",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_11n.png",
+                "name": "IMG_WEATHER_11n",
                 "type": "png"
             },
             {
@@ -145,23 +70,18 @@
                 "type": "png"
             },
             {
+                "file": "images/battery_20.png",
+                "name": "IMG_BATTERY_20",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_60.png",
+                "name": "IMG_BATTERY_60",
+                "type": "png"
+            },
+            {
                 "file": "images/weather_icn_10d.png",
                 "name": "IMG_WEATHER_10d",
-                "type": "png"
-            },
-            {
-                "file": "images/weather_icn_10n.png",
-                "name": "IMG_WEATHER_10n",
-                "type": "png"
-            },
-            {
-                "file": "images/weather_icn_11d.png",
-                "name": "IMG_WEATHER_11d",
-                "type": "png"
-            },
-            {
-                "file": "images/weather_icn_11n.png",
-                "name": "IMG_WEATHER_11n",
                 "type": "png"
             },
             {
@@ -170,18 +90,23 @@
                 "type": "png"
             },
             {
-                "file": "images/weather_icn_13n.png",
-                "name": "IMG_WEATHER_13n",
-                "type": "png"
-            },
-            {
                 "file": "images/weather_icn_50d.png",
                 "name": "IMG_WEATHER_50d",
                 "type": "png"
             },
             {
-                "file": "images/weather_icn_50n.png",
-                "name": "IMG_WEATHER_50n",
+                "file": "images/weather_icn_02n.png",
+                "name": "IMG_WEATHER_02n",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_80.png",
+                "name": "IMG_BATTERY_80",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_00.png",
+                "name": "IMG_WEATHER_00",
                 "type": "png"
             },
             {
@@ -190,9 +115,64 @@
                 "type": "png"
             },
             {
+                "file": "images/weather_icn_10n.png",
+                "name": "IMG_WEATHER_10n",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_01d.png",
+                "name": "IMG_WEATHER_01d",
+                "type": "png"
+            },
+            {
+                "file": "images/battery_chrg.png",
+                "name": "IMG_BATTERY_CHRG",
+                "type": "png"
+            },
+            {
+                "file": "images/comm_on.png",
+                "name": "IMG_COMM_ON",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_04n.png",
+                "name": "IMG_WEATHER_04n",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_03d.png",
+                "name": "IMG_WEATHER_03d",
+                "type": "png"
+            },
+            {
                 "file": "images/app_icon.png",
                 "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",
+                "type": "png"
+            },
+            {
+                "file": "images/weather_icn_01n.png",
+                "name": "IMG_WEATHER_01n",
+                "type": "png"
+            },
+            {
+                "file": "images/icon_clear.png",
+                "name": "IMG_ICON_CLEAR",
+                "type": "png"
+            },
+            {
+                "file": "images/comm_err.png",
+                "name": "IMG_COMM_ERR",
+                "type": "png"
+            },
+            {
+                "file": "fonts/Oblivious.ttf",
+                "name": "FONT_TINY_10",
+                "type": "font"
+            },
+            {
+                "file": "images/weather_icn_02d.png",
+                "name": "IMG_WEATHER_02d",
                 "type": "png"
             }
         ]
@@ -204,7 +184,6 @@
         "basalt"
     ],
     "uuid": "42950f77-0eda-476b-958a-df87537d3eb9",
-    "versionCode": 1,
     "versionLabel": "2.4",
     "watchapp": {
         "watchface": true
