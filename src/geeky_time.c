@@ -31,6 +31,7 @@ static bool bt_connected = 1;
 static AppSync sync;
 static uint8_t sync_buffer[64];
 static bool bt_vibrate = 1;
+static char date_format[] = "mmdd";
 
 enum TupleKey {
   WEATHER_ICON_KEY = 0x0,         // TUPLE_CSTRING
@@ -298,6 +299,18 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         bt_vibrate = 0;
       }
       break;
+    case CONFIG_DATE_FORMAT:
+      if (strcmp(new_tuple->value->cstring, "ddmm") == 0)
+      {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting date format to dd-mm");
+        date_format = "ddmm";
+      }
+      else
+      {
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting date format to mm-dd");
+        date_format = "mmdd";
+      }
+      break;
   }
 }
 
@@ -434,7 +447,15 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
     strftime(time_text, sizeof(time_text), time_format, tick_time);
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Current time: %s", time_text);
 
-    strftime(date_text, sizeof(date_text), "%a %m-%d", tick_time);
+    if (strcmp(date_format, "ddmm") == 0)
+    {
+      strftime(date_text, sizeof(date_text), "%a %d-%m", tick_time);
+    }
+    else
+    {
+      strftime(date_text, sizeof(date_text), "%a %m-%d", tick_time);
+    }
+  
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Current date: %s", date_text);
 
     text_layer_set_text(time_layer, time_text);
