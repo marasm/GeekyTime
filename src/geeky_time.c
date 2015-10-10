@@ -422,7 +422,7 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
   if(units_changed & MINUTE_UNIT) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Minute tick");
     static char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
-    static char date_text[] = "Sun 01/01"; // Needs to be static because it's used by the system later.
+    static char date_text[] = "Sun 01-01"; // Needs to be static because it's used by the system later.
     char *time_format;
     time_format = "%I:%M";
     if (clock_is_24h_style())
@@ -440,7 +440,7 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
     text_layer_set_text(date_layer, date_text);
 
   }
-  //if the temp has not been refreshed yet ("--") do it no
+  //if the temp has not been refreshed yet ("--") do it now
   if(temp_layer &&
      text_layer_get_text(temp_layer) != NULL &&
      strcmp("--", text_layer_get_text(temp_layer)) == 0)
