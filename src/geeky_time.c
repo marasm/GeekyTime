@@ -31,7 +31,7 @@ static bool bt_connected = 1;
 static AppSync sync;
 static uint8_t sync_buffer[64];
 static bool bt_vibrate = 1;
-static char date_format[] = "mmdd";
+static char *date_format = "mmdd";
 
 enum TupleKey {
   WEATHER_ICON_KEY = 0x0,         // TUPLE_CSTRING
