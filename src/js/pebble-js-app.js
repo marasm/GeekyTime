@@ -5,6 +5,7 @@ var btVibrate = 'On';
 var dateFormat = 'mmdd';
 var autoLocation = 'On';
 var manLocation = '';
+var owmAppId = '9b46f205cf161eb68ebcf12970587b88';
 
 function sendToWatchSuccess(e)
 {
@@ -75,7 +76,7 @@ function fetchWeatherForCoords(latitude, longitude) {
     longitude);
   var req = new XMLHttpRequest();
   req.open('GET', "http://api.openweathermap.org/data/2.5/weather?" +
-    "lat=" + latitude + "&lon=" + longitude, true);
+    "lat=" + latitude + "&lon=" + longitude + '&APPID=' + owmAppId, true);
   req.onload = parseWeatherResponse;
   req.send(null);
 }
@@ -86,7 +87,7 @@ function fetchWeatherForStaticLocation(locationString) {
       locationString);
   var req = new XMLHttpRequest();
   req.open('GET', "http://api.openweathermap.org/data/2.5/weather?" +
-    "q=" + locationString, true);
+    "q=" + locationString + '&APPID=' + owmAppId, true);
   req.onload = parseWeatherResponse;
   req.send(null);
 }
