@@ -26,6 +26,11 @@
 build
 sim
 
+# Generated
+src/generated
+src/js/generated
+
+
 # Config
 .lock-waf_darwin_build
 .DS_Store

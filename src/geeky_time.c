@@ -1,5 +1,6 @@
 
 #include "pebble.h"
+#include "generated/appinfo.h"
 
 //the below 2 lines disable logging
 #undef APP_LOG
@@ -491,6 +492,8 @@ static void init() {
   {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Running on Classic Pebble");
   }
+  
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "WatchFace version: %s", VERSION_LABEL);
   
   window = window_create();
   window_stack_push(window, true /* Animated */);

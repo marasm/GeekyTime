@@ -240,7 +240,8 @@ Pebble.addEventListener("ready",
                           console.log("JS - ready called " + e.ready);
                           if (!initDone)
                           {
-                            console.log("JS - performing init tasks" + e.ready);
+                            console.log("JS - performing init tasks");
+							console.log("WatchFace version: " + AppInfo.versionLabel);
                             initConfigOptions();
                             initDone = true;
                             getAppropriateWeatherData();
