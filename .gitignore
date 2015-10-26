@@ -29,7 +29,7 @@ sim
 # Generated
 src/generated
 src/js/generated
-
+src/js/pebble-js-app.js
 
 # Config
 .lock-waf_darwin_build

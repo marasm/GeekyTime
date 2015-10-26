@@ -42,8 +42,13 @@ def build(ctx):
             target=worker_elf)
         else:
             binaries.append({'platform': p, 'app_elf': app_elf})
+			
+	# Concatenate all JS files into pebble-js-app.js prior to building.
+	all_js = "\n".join([node.read() for node in ctx.path.ant_glob('src/js/**/*.js', excl='src/js/pebble-js-app.js')])
+	out_js_node = ctx.path.make_node('src/js/pebble-js-app.js')
+	out_js_node.write(all_js)
 
-    ctx.pbl_bundle(binaries=binaries, js=ctx.path.ant_glob('src/js/**/*.js'))
+    ctx.pbl_bundle(binaries=binaries, js=out_js_node)
 
 def generate_appinfo_h(task):
     src = task.inputs[0].abspath()
