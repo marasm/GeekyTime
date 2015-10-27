@@ -6,6 +6,7 @@ var dateFormat = 'mmdd';
 var autoLocation = 'On';
 var manLocation = '';
 var owmAppId = '9b46f205cf161eb68ebcf12970587b88';
+var faceVersion = '1.0'; //default version
 
 function sendToWatchSuccess(e)
 {
@@ -121,6 +122,15 @@ function locationError(err) {
 
 function initConfigOptions()
 {
+  if (AppInfo != null)
+  {
+    console.log("WatchFace version: " + AppInfo.versionLabel);
+    faceVersion = AppInfo.versionLabel;
+  }
+  else
+  {
+    console.log("AppInfo undefined!!! Will use default version: " + faceVersion);
+  }
   var tempScaleLS = localStorage.getItem('tempScale');
   if (tempScaleLS !== null && tempScaleLS != 'undefined' && tempScaleLS.length == 1)
   {
@@ -242,14 +252,6 @@ Pebble.addEventListener("ready",
                           if (!initDone)
                           {
                             console.log("JS - performing init tasks");
-                            if (AppInfo != null)
-                            {
-                              console.log("WatchFace version: " + AppInfo.versionLabel);
-                            }
-                            else
-                            {
-                              console.log("AppInfo undefined!!!");
-                            }
                             initConfigOptions();
                             initDone = true;
                             getAppropriateWeatherData();
@@ -275,5 +277,5 @@ Pebble.addEventListener("showConfiguration",
                          function() {
                          console.log("showing configuration +");
                          initConfigOptions();
-                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate + '&dateFormat=' + dateFormat + '&autoLocation=' + autoLocation + '&manLocation=' + manLocation + '&allowLocSelect=true');
+                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate + '&dateFormat=' + dateFormat + '&autoLocation=' + autoLocation + '&manLocation=' + manLocation + '&allowLocSelect=true' + '&version=' + faceVersion);
                          });
