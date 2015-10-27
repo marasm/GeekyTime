@@ -193,7 +193,7 @@ function applyAndStoreConfigOptions(inOptions)
     if (inOptions.manLocation !== null && inOptions.manLocation.trim().length > 0)
     {
       localStorage.setItem('manLocation', inOptions.manLocation);
-      autoLocation = inOptions.manLocation;
+      manLocation = inOptions.manLocation;
     }
 
     //this option is applicable to watch app only so store and send to watch
@@ -242,7 +242,14 @@ Pebble.addEventListener("ready",
                           if (!initDone)
                           {
                             console.log("JS - performing init tasks");
-							console.log("WatchFace version: " + AppInfo.versionLabel);
+                            if (AppInfo != null)
+                            {
+                              console.log("WatchFace version: " + AppInfo.versionLabel);
+                            }
+                            else
+                            {
+                              console.log("AppInfo undefined!!!");
+                            }
                             initConfigOptions();
                             initDone = true;
                             getAppropriateWeatherData();

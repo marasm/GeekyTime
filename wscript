@@ -69,5 +69,5 @@ def generate_appinfo_js(task):
     f = open(target, 'w')
     f.write('var AppInfo = ')
     f.write(data)
-    f.write(';')
+    f.write(';\n\n')
     f.close()
