@@ -226,10 +226,9 @@ function applyAndStoreConfigOptions(inOptions)
 function sendWatchConfigToWatch()
 {
   console.log('Sending btVibrate=' + btVibrate + " to the watch");
-  Pebble.sendAppMessage({
-    "btVibrate" : btVibrate,
-    "dateFormat" : dateFormat
-  });
+  console.log('Sending ... dateFormat=' + dateFormat + " to the watch");
+  Pebble.sendAppMessage({"btVibrate" : btVibrate,
+                         "dateFormat" : dateFormat}, sendToWatchSuccess, sendToWatchFail);
 }
 
 var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minutes
