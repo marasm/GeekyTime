@@ -1,5 +1,6 @@
 
 #include "pebble.h"
+#include "generated/appinfo.h"
 
 //the below 2 lines disable logging
 #undef APP_LOG
@@ -31,12 +32,14 @@ static bool bt_connected = 1;
 static AppSync sync;
 static uint8_t sync_buffer[64];
 static bool bt_vibrate = 1;
+static char *date_format = "mmdd";
 
 enum TupleKey {
   WEATHER_ICON_KEY = 0x0,         // TUPLE_CSTRING
   WEATHER_TEMPERATURE_KEY = 0x1,  // TUPLE_CSTRING
   WEATHER_LOCATION_KEY = 0x2,     // TUPLE_CSTRING
-  CONFIG_BT_VIBRATE = 0x64        // TUPLE_CSTRING (100 in decimal)
+  CONFIG_BT_VIBRATE = 0x64,       // TUPLE_CSTRING (100 in decimal)
+  CONFIG_DATE_FORMAT = 0x65       // TUPLE_CSTRING (101 in decimal)
 };
 
 #ifdef PBL_COLOR
@@ -81,6 +84,177 @@ static bool is_valid_temp(const char * st)
     }
   }
   return true;
+}
+
+static void send_cmd(void) {
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending sync message to phone...");
+  if (comm_bitmap)
+  {
+    gbitmap_destroy(comm_bitmap);
+  }
+
+  comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ON);
+  bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
+  layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
+
+  Tuplet value = TupletInteger(1, 1);
+
+  DictionaryIterator *iter;
+  app_message_outbox_begin(&iter);
+
+  if (iter == NULL) {
+    return;
+  }
+
+  dict_write_tuplet(iter, &value);
+  dict_write_end(iter);
+
+  app_message_outbox_send();
+}
+
+static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
+
+  if(units_changed & MINUTE_UNIT) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Minute tick");
+    static char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
+    static char date_text[] = "Sun 01-01"; // Needs to be static because it's used by the system later.
+    char *time_format;
+    time_format = "%I:%M";
+    if (clock_is_24h_style())
+    {
+      time_format = "%R";
+    }
+
+    strftime(time_text, sizeof(time_text), time_format, tick_time);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Current time: %s", time_text);
+
+    if (strcmp(date_format, "ddmm") == 0)
+    {
+      strftime(date_text, sizeof(date_text), "%a %d-%m", tick_time);
+    }
+    else
+    {
+      strftime(date_text, sizeof(date_text), "%a %m-%d", tick_time);
+    }
+  
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Current date: %s", date_text);
+
+    text_layer_set_text(time_layer, time_text);
+    text_layer_set_text(date_layer, date_text);
+
+  }
+  //if the temp has not been refreshed yet ("--") do it now
+  if(temp_layer &&
+     text_layer_get_text(temp_layer) != NULL &&
+     strcmp("--", text_layer_get_text(temp_layer)) == 0)
+  {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Default temp of -- detected during minute tick. Request weather refresh");
+    send_cmd();
+  }
+
+  //Make sure that the weather is refreshed at least hourly
+  if(units_changed & HOUR_UNIT) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Hour tick");
+    send_cmd();
+  }
+
+}
+
+static void update_date_time() {
+  time_t now = time(NULL);
+  struct tm *current_time = localtime(&now);
+  handle_time_tick(current_time, MINUTE_UNIT);
+}
+
+static void handle_tap(AccelAxisType axis, int32_t direction)
+{
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "tap direction=%i", (int)direction);
+  switch (axis) {
+    case ACCEL_AXIS_X:
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=X");
+      break;
+    case ACCEL_AXIS_Y:
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=Y");
+      break;
+    case ACCEL_AXIS_Z:
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=Z");
+      send_cmd();
+      break;
+  }
+}
+
+static void handle_bluetooth(bool connected) {
+  if (bt_bitmap)
+  {
+    gbitmap_destroy(bt_bitmap);
+  }
+  if (connected)
+  {
+    bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_BT_ON);
+
+    if (!bt_connected)
+    {
+      bt_connected = 1;
+      if (bt_vibrate)
+      {
+        vibes_double_pulse();
+      }
+    }
+  }
+  else
+  {
+    bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_ICON_CLEAR);
+    if (bt_connected)
+    {
+      bt_connected = 0;
+      if (bt_vibrate)
+      {
+        vibes_long_pulse();
+      }
+    }
+  }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "handle_bluetooth connected=%i", connected);
+  bitmap_layer_set_bitmap(bt_layer, bt_bitmap);
+  layer_mark_dirty(bitmap_layer_get_layer(bt_layer));
+}
+
+static void handle_battery(BatteryChargeState charge_state) {
+  static char battery_text[] = "100%";
+  if (battery_bitmap) {
+    gbitmap_destroy(battery_bitmap);
+  }
+  if (charge_state.is_charging || charge_state.is_plugged) {
+
+    battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[0]);
+  }
+  else {
+    if (charge_state.charge_percent > 80) //80 - 100% charge
+    {
+      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[5]);
+    }
+    else if (charge_state.charge_percent > 60 && charge_state.charge_percent <= 80) //60 - 80% charge
+    {
+      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[4]);
+    }
+    else if (charge_state.charge_percent > 40 && charge_state.charge_percent <= 60) //40 - 60% charge
+    {
+      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[3]);
+    }
+    else if (charge_state.charge_percent > 20 && charge_state.charge_percent <= 40) //20 - 40% charge
+    {
+      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[2]);
+    }
+    else  //less than 20% charge
+    {
+      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[1]);
+    }
+
+  }
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "handle_battery: %i remaining", charge_state.charge_percent);
+  snprintf(battery_text, sizeof(battery_text), "%d%%", charge_state.charge_percent);
+  text_layer_set_text(bat_perc_layer, battery_text);
+  bitmap_layer_set_bitmap(battery_layer, battery_bitmap);
+  layer_mark_dirty(bitmap_layer_get_layer(battery_layer));
 }
 
 
@@ -297,165 +471,24 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
         bt_vibrate = 0;
       }
       break;
-  }
-}
-
-static void send_cmd(void) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending sync message to phone...");
-  if (comm_bitmap)
-  {
-    gbitmap_destroy(comm_bitmap);
-  }
-
-  comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_COMM_ON);
-  bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
-  layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
-
-  Tuplet value = TupletInteger(1, 1);
-
-  DictionaryIterator *iter;
-  app_message_outbox_begin(&iter);
-
-  if (iter == NULL) {
-    return;
-  }
-
-  dict_write_tuplet(iter, &value);
-  dict_write_end(iter);
-
-  app_message_outbox_send();
-}
-
-static void handle_tap(AccelAxisType axis, int32_t direction)
-{
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "tap direction=%i", (int)direction);
-  switch (axis) {
-    case ACCEL_AXIS_X:
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=X");
-      break;
-    case ACCEL_AXIS_Y:
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=Y");
-      break;
-    case ACCEL_AXIS_Z:
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "tap axis=Z");
-      send_cmd();
-      break;
-  }
-}
-
-static void handle_bluetooth(bool connected) {
-  if (bt_bitmap)
-  {
-    gbitmap_destroy(bt_bitmap);
-  }
-  if (connected)
-  {
-    bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_BT_ON);
-
-    if (!bt_connected)
-    {
-      bt_connected = 1;
-      if (bt_vibrate)
+    case CONFIG_DATE_FORMAT:
+      if (strcmp(new_tuple->value->cstring, "ddmm") == 0)
       {
-        vibes_double_pulse();
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting date format to dd-mm");
+        date_format = "ddmm";
       }
-    }
-  }
-  else
-  {
-    bt_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_ICON_CLEAR);
-    if (bt_connected)
-    {
-      bt_connected = 0;
-      if (bt_vibrate)
+      else
       {
-        vibes_long_pulse();
+        APP_LOG(APP_LOG_LEVEL_DEBUG, "Setting date format to mm-dd");
+        date_format = "mmdd";
       }
-    }
+      //update date to reflect the config change
+      update_date_time();
+      break;
   }
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "handle_bluetooth connected=%i", connected);
-  bitmap_layer_set_bitmap(bt_layer, bt_bitmap);
-  layer_mark_dirty(bitmap_layer_get_layer(bt_layer));
 }
 
-static void handle_battery(BatteryChargeState charge_state) {
-  static char battery_text[] = "100%";
-  if (battery_bitmap) {
-    gbitmap_destroy(battery_bitmap);
-  }
-  if (charge_state.is_charging || charge_state.is_plugged) {
 
-    battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[0]);
-  }
-  else {
-    if (charge_state.charge_percent > 80) //80 - 100% charge
-    {
-      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[5]);
-    }
-    else if (charge_state.charge_percent > 60 && charge_state.charge_percent <= 80) //60 - 80% charge
-    {
-      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[4]);
-    }
-    else if (charge_state.charge_percent > 40 && charge_state.charge_percent <= 60) //40 - 60% charge
-    {
-      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[3]);
-    }
-    else if (charge_state.charge_percent > 20 && charge_state.charge_percent <= 40) //20 - 40% charge
-    {
-      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[2]);
-    }
-    else  //less than 20% charge
-    {
-      battery_bitmap = gbitmap_create_with_resource(BATTERY_ICONS[1]);
-    }
-
-  }
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "handle_battery: %i remaining", charge_state.charge_percent);
-  snprintf(battery_text, sizeof(battery_text), "%d%%", charge_state.charge_percent);
-  text_layer_set_text(bat_perc_layer, battery_text);
-  bitmap_layer_set_bitmap(battery_layer, battery_bitmap);
-  layer_mark_dirty(bitmap_layer_get_layer(battery_layer));
-}
-
-static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
-
-  if(units_changed & MINUTE_UNIT) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Minute tick");
-    static char time_text[] = "00:00"; // Needs to be static because it's used by the system later.
-    static char date_text[] = "Sun 01-01"; // Needs to be static because it's used by the system later.
-    char *time_format;
-    time_format = "%I:%M";
-    if (clock_is_24h_style())
-    {
-      time_format = "%R";
-    }
-
-    strftime(time_text, sizeof(time_text), time_format, tick_time);
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Current time: %s", time_text);
-
-    strftime(date_text, sizeof(date_text), "%a %m-%d", tick_time);
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Current date: %s", date_text);
-
-    text_layer_set_text(time_layer, time_text);
-    text_layer_set_text(date_layer, date_text);
-
-  }
-  //if the temp has not been refreshed yet ("--") do it now
-  if(temp_layer &&
-     text_layer_get_text(temp_layer) != NULL &&
-     strcmp("--", text_layer_get_text(temp_layer)) == 0)
-  {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Default temp of -- detected during minute tick. Request weather refresh");
-    send_cmd();
-  }
-
-  //Make sure that the weather is refreshed at least hourly
-  if(units_changed & HOUR_UNIT) {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Hour tick");
-    send_cmd();
-  }
-
-}
 
 
 static void init() {
@@ -469,6 +502,8 @@ static void init() {
   {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Running on Classic Pebble");
   }
+  
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "WatchFace version: %s", VERSION_LABEL);
   
   window = window_create();
   window_stack_push(window, true /* Animated */);
@@ -567,11 +602,10 @@ static void init() {
   // text_layer_set_text(temp_layer, "74");
   // text_layer_set_text(weather_loc_layer, "Denver, CO");
 
+  //update the date and time for the first time
+  update_date_time();
 
   //EVENT SUBSCRIBTIONS
-  time_t now = time(NULL);
-  struct tm *current_time = localtime(&now);
-  handle_time_tick(current_time, MINUTE_UNIT);
   handle_battery(battery_state_service_peek());
   handle_bluetooth(bluetooth_connection_service_peek());
   tick_timer_service_subscribe(MINUTE_UNIT|HOUR_UNIT, &handle_time_tick);
@@ -599,7 +633,8 @@ static void init() {
     TupletCString(WEATHER_ICON_KEY, "00"),
     TupletCString(WEATHER_TEMPERATURE_KEY, "--"),
     TupletCString(WEATHER_LOCATION_KEY, "Unknown"),
-    TupletCString(CONFIG_BT_VIBRATE, bt_vibrate_str)
+    TupletCString(CONFIG_BT_VIBRATE, bt_vibrate_str),
+    TupletCString(CONFIG_DATE_FORMAT, date_format)
   };
 
   app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values,

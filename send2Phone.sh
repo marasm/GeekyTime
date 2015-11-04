@@ -1,2 +1,3 @@
+pebble clean
 pebble build
-pebble install --phone 192.168.1.153 $@ 
+pebble install --phone 192.168.1.193 $@ 

@@ -2,9 +2,11 @@ var initDone = false;
 var tempScale = 'F';
 var tempCorrect = 0;
 var btVibrate = 'On';
+var dateFormat = 'mmdd';
 var autoLocation = 'On';
 var manLocation = '';
 var owmAppId = '9b46f205cf161eb68ebcf12970587b88';
+var faceVersion = '1.0'; //default version
 
 function sendToWatchSuccess(e)
 {
@@ -60,8 +62,7 @@ function parseWeatherResponse() {
       Pebble.sendAppMessage({
         "icon":icon,
         "temperature":temperature.toString(),
-        "location":location,
-        "btVibrate" : btVibrate}, sendToWatchSuccess, sendToWatchFail);
+        "location":location}, sendToWatchSuccess, sendToWatchFail);
 
     }
     else
@@ -121,6 +122,15 @@ function locationError(err) {
 
 function initConfigOptions()
 {
+  if (AppInfo != null)
+  {
+    console.log("WatchFace version: " + AppInfo.versionLabel);
+    faceVersion = AppInfo.versionLabel;
+  }
+  else
+  {
+    console.log("AppInfo undefined!!! Will use default version: " + faceVersion);
+  }
   var tempScaleLS = localStorage.getItem('tempScale');
   if (tempScaleLS !== null && tempScaleLS != 'undefined' && tempScaleLS.length == 1)
   {
@@ -143,6 +153,13 @@ function initConfigOptions()
   {
     btVibrate = btVibrateLS;
     console.log("Assigned btVibrate from storage=" + btVibrateLS);
+  }
+  
+  var dateFormatLS = localStorage.getItem('dateFormat');
+  if (dateFormatLS !== null && dateFormatLS != 'undefined' && dateFormatLS.length > 0)
+  {
+    dateFormat = dateFormatLS;
+    console.log("Assigned dateFormat from storage=" + dateFormatLS);
   }
 
   var autoLocationLS = localStorage.getItem('autoLocation');
@@ -167,7 +184,7 @@ function applyAndStoreConfigOptions(inOptions)
 {
   if (inOptions !== null && inOptions != 'undefined')
   {
-    //these 2 options are for the JS running on the phone
+    //these options are for the JS running on the phone
     if (inOptions.tempScale !== null && inOptions.tempScale.length == 1)
     {
       localStorage.setItem('tempScale', inOptions.tempScale);
@@ -186,7 +203,7 @@ function applyAndStoreConfigOptions(inOptions)
     if (inOptions.manLocation !== null && inOptions.manLocation.trim().length > 0)
     {
       localStorage.setItem('manLocation', inOptions.manLocation);
-      autoLocation = inOptions.manLocation;
+      manLocation = inOptions.manLocation;
     }
 
     //this option is applicable to watch app only so store and send to watch
@@ -194,8 +211,14 @@ function applyAndStoreConfigOptions(inOptions)
     {
       localStorage.setItem('btVibrate', inOptions.btVibrate);
       btVibrate = inOptions.btVibrate;
-      sendWatchConfigToWatch();
     }
+
+    if (inOptions.dateFormat !== null && inOptions.dateFormat.length > 0)
+    {
+      localStorage.setItem('dateFormat', inOptions.dateFormat);
+      dateFormat = inOptions.dateFormat;
+    }
+    sendWatchConfigToWatch();
   }
 }
 
@@ -203,9 +226,9 @@ function applyAndStoreConfigOptions(inOptions)
 function sendWatchConfigToWatch()
 {
   console.log('Sending btVibrate=' + btVibrate + " to the watch");
-  Pebble.sendAppMessage({
-    "btVibrate" : btVibrate
-  });
+  console.log('Sending ... dateFormat=' + dateFormat + " to the watch");
+  Pebble.sendAppMessage({"btVibrate" : btVibrate,
+                         "dateFormat" : dateFormat}, sendToWatchSuccess, sendToWatchFail);
 }
 
 var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minutes
@@ -227,7 +250,7 @@ Pebble.addEventListener("ready",
                           console.log("JS - ready called " + e.ready);
                           if (!initDone)
                           {
-                            console.log("JS - performing init tasks" + e.ready);
+                            console.log("JS - performing init tasks");
                             initConfigOptions();
                             initDone = true;
                             getAppropriateWeatherData();
@@ -253,5 +276,5 @@ Pebble.addEventListener("showConfiguration",
                          function() {
                          console.log("showing configuration +");
                          initConfigOptions();
-                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate + '&autoLocation=' + autoLocation + '&manLocation=' + manLocation + '&allowLocSelect=true');
+                         Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate + '&dateFormat=' + dateFormat + '&autoLocation=' + autoLocation + '&manLocation=' + manLocation + '&allowLocSelect=true' + '&faceVersion=' + faceVersion);
                          });
