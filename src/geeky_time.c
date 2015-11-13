@@ -141,16 +141,18 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
 
     text_layer_set_text(time_layer, time_text);
     text_layer_set_text(date_layer, date_text);
-
+    
+    //if the temp has not been refreshed yet ("--") do it now
+    if(temp_layer &&
+       text_layer_get_text(temp_layer) != NULL &&
+       strcmp("--", text_layer_get_text(temp_layer)) == 0)
+    {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Default temp of -- detected during minute tick. Request weather refresh");
+      send_cmd();
+    }
+    
   }
-  //if the temp has not been refreshed yet ("--") do it now
-  if(temp_layer &&
-     text_layer_get_text(temp_layer) != NULL &&
-     strcmp("--", text_layer_get_text(temp_layer)) == 0)
-  {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Default temp of -- detected during minute tick. Request weather refresh");
-    send_cmd();
-  }
+  
 
   //Make sure that the weather is refreshed at least hourly
   if(units_changed & HOUR_UNIT) {
