@@ -149,9 +149,9 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
     //if the temp has not been refreshed yet ("--") do it now
     if(temp_layer &&
        text_layer_get_text(temp_layer) != NULL &&
-       strcmp("--", text_layer_get_text(temp_layer)) == 0)
+       (strcmp("--", text_layer_get_text(temp_layer)) == 0) || !is_valid_temp(text_layer_get_text(temp_layer)))
     {
-      APP_LOG(APP_LOG_LEVEL_DEBUG, "Default temp of -- detected during minute tick. Request weather refresh");
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected during minute tick. Request weather refresh");
       send_cmd();
     }
     
