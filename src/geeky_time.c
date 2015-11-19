@@ -35,6 +35,7 @@ static AppSync sync;
 static uint8_t sync_buffer[64];
 static bool bt_vibrate = 1;
 static char *date_format = "mmdd";
+static char last_upd_time_text[] = "00:00";
 
 enum TupleKey {
   WEATHER_ICON_KEY = 0x0,         // TUPLE_CSTRING
@@ -149,15 +150,17 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
     //if the temp has not been refreshed yet ("--") do it now
     if(temp_layer &&
        text_layer_get_text(temp_layer) != NULL &&
-       (strcmp("--", text_layer_get_text(temp_layer)) == 0) || !is_valid_temp(text_layer_get_text(temp_layer)))
+       strcmp(last_upd_time_text, time_text) != 0 &&
+       (strcmp("--", text_layer_get_text(temp_layer)) == 0 || !is_valid_temp(text_layer_get_text(temp_layer))))
     {
       APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected during minute tick. Request weather refresh");
+      strncpy(last_upd_time_text, time_text, sizeof(time_text));
       send_cmd();
     }
     
-    static char sync_count_text[] = "0";
+    static char sync_count_text[] = "0000";
     APP_LOG(APP_LOG_LEVEL_DEBUG, "sync count: %i ", sync_msg_count);
-    snprintf(sync_count_text, sizeof(sync_count_text), "%i", sync_msg_count);
+    snprintf(sync_count_text, sizeof(sync_count_text), "%d", sync_msg_count);
     text_layer_set_text(sync_count_layer, sync_count_text);
   }
   
@@ -336,6 +339,7 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "CallBack. Key=%i", (int)key);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Callback. Tuple Value=%s", new_tuple->value->cstring);
+  
   switch (key) {
     case WEATHER_ICON_KEY:
       if (icon_bitmap)
@@ -521,14 +525,14 @@ static void init() {
 
   Layer *window_layer = window_get_root_layer(window);
   
-  //SYNC COUNT 
+  //SYNC COUNT (used for troubleshooting)
   GFont custom_font_sync_count = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TINY_10));
   sync_count_layer = text_layer_create(GRect(1, 1, 33, 15));
-  text_layer_set_font(sync_count_layer, custom_font_bat_perc);
+  text_layer_set_font(sync_count_layer, custom_font_sync_count);
   text_layer_set_text_color(sync_count_layer, GColorWhite);
   text_layer_set_background_color(sync_count_layer, GColorClear);
   text_layer_set_text_alignment(sync_count_layer, GTextAlignmentLeft);
-  layer_add_child(window_layer, text_layer_get_layer(sync_count_layer));
+  // layer_add_child(window_layer, text_layer_get_layer(sync_count_layer));
   
   //PHONE COMM
   comm_layer = bitmap_layer_create(GRect(35, 3, 10, 10));
