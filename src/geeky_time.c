@@ -13,6 +13,7 @@ static TextLayer *time_layer;
 static TextLayer *date_layer;
 static TextLayer *temp_layer;
 static TextLayer *weather_loc_layer;
+static TextLayer *sync_count_layer;
 
 static BitmapLayer *bt_layer;
 static BitmapLayer *comm_layer;
@@ -28,11 +29,13 @@ static GBitmap *therm_bitmap = NULL;
 static GFont custom_font_temp_30;
 static GFont custom_font_temp_40;
 
+static int sync_msg_count = 0;
 static bool bt_connected = 1;
 static AppSync sync;
 static uint8_t sync_buffer[64];
 static bool bt_vibrate = 1;
 static char *date_format = "mmdd";
+static char last_upd_time_text[] = "00:00";
 
 enum TupleKey {
   WEATHER_ICON_KEY = 0x0,         // TUPLE_CSTRING
@@ -88,6 +91,7 @@ static bool is_valid_temp(const char * st)
 
 static void send_cmd(void) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending sync message to phone...");
+  
   if (comm_bitmap)
   {
     gbitmap_destroy(comm_bitmap);
@@ -110,6 +114,7 @@ static void send_cmd(void) {
   dict_write_end(iter);
 
   app_message_outbox_send();
+  sync_msg_count++;
 }
 
 static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
@@ -141,16 +146,24 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
 
     text_layer_set_text(time_layer, time_text);
     text_layer_set_text(date_layer, date_text);
-
+    
+    //if the temp has not been refreshed yet ("--") do it now
+    if(temp_layer &&
+       text_layer_get_text(temp_layer) != NULL &&
+       strcmp(last_upd_time_text, time_text) != 0 &&
+       (strcmp("--", text_layer_get_text(temp_layer)) == 0 || !is_valid_temp(text_layer_get_text(temp_layer))))
+    {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected during minute tick. Request weather refresh");
+      strncpy(last_upd_time_text, time_text, sizeof(time_text));
+      send_cmd();
+    }
+    
+    static char sync_count_text[] = "0000";
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "sync count: %i ", sync_msg_count);
+    snprintf(sync_count_text, sizeof(sync_count_text), "%d", sync_msg_count);
+    text_layer_set_text(sync_count_layer, sync_count_text);
   }
-  //if the temp has not been refreshed yet ("--") do it now
-  if(temp_layer &&
-     text_layer_get_text(temp_layer) != NULL &&
-     strcmp("--", text_layer_get_text(temp_layer)) == 0)
-  {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "Default temp of -- detected during minute tick. Request weather refresh");
-    send_cmd();
-  }
+  
 
   //Make sure that the weather is refreshed at least hourly
   if(units_changed & HOUR_UNIT) {
@@ -326,6 +339,7 @@ static void sync_error_callback(DictionaryResult dict_error, AppMessageResult ap
 static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tuple, const Tuple* old_tuple, void* context) {
   APP_LOG(APP_LOG_LEVEL_DEBUG, "CallBack. Key=%i", (int)key);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Callback. Tuple Value=%s", new_tuple->value->cstring);
+  
   switch (key) {
     case WEATHER_ICON_KEY:
       if (icon_bitmap)
@@ -510,7 +524,16 @@ static void init() {
   window_set_background_color(window, GColorBlack);
 
   Layer *window_layer = window_get_root_layer(window);
-
+  
+  //SYNC COUNT (used for troubleshooting)
+  GFont custom_font_sync_count = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TINY_10));
+  sync_count_layer = text_layer_create(GRect(1, 1, 33, 15));
+  text_layer_set_font(sync_count_layer, custom_font_sync_count);
+  text_layer_set_text_color(sync_count_layer, GColorWhite);
+  text_layer_set_background_color(sync_count_layer, GColorClear);
+  text_layer_set_text_alignment(sync_count_layer, GTextAlignmentLeft);
+  // layer_add_child(window_layer, text_layer_get_layer(sync_count_layer));
+  
   //PHONE COMM
   comm_layer = bitmap_layer_create(GRect(35, 3, 10, 10));
   layer_add_child(window_layer, bitmap_layer_get_layer(comm_layer));
@@ -655,6 +678,7 @@ static void deinit() {
   text_layer_destroy(date_layer);
   text_layer_destroy(temp_layer);
   text_layer_destroy(weather_loc_layer);
+  text_layer_destroy(sync_count_layer);
   gbitmap_destroy(comm_bitmap);
   bitmap_layer_destroy(comm_layer);
   gbitmap_destroy(bt_bitmap);
