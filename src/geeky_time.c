@@ -529,10 +529,10 @@ static void init() {
   GFont custom_font_sync_count = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TINY_10));
   sync_count_layer = text_layer_create(GRect(1, 1, 33, 15));
   text_layer_set_font(sync_count_layer, custom_font_sync_count);
-  text_layer_set_text_color(sync_count_layer, GColorWhite);
+  text_layer_set_text_color(sync_count_layer, GColorBlack); //black to hide the debug info
   text_layer_set_background_color(sync_count_layer, GColorClear);
   text_layer_set_text_alignment(sync_count_layer, GTextAlignmentLeft);
-  // layer_add_child(window_layer, text_layer_get_layer(sync_count_layer));
+  layer_add_child(window_layer, text_layer_get_layer(sync_count_layer));
   
   //PHONE COMM
   comm_layer = bitmap_layer_create(GRect(35, 3, 10, 10));
