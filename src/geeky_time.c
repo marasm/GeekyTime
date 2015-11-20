@@ -340,6 +340,15 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
   APP_LOG(APP_LOG_LEVEL_DEBUG, "CallBack. Key=%i", (int)key);
   APP_LOG(APP_LOG_LEVEL_DEBUG, "Callback. Tuple Value=%s", new_tuple->value->cstring);
   
+  //callback called so communication was successful -> remove the comm icon
+  if (comm_bitmap)
+  {
+    gbitmap_destroy(comm_bitmap);
+  }
+  comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_ICON_CLEAR);
+  bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
+  layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
+  
   switch (key) {
     case WEATHER_ICON_KEY:
       if (icon_bitmap)
@@ -463,15 +472,6 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
 
     case WEATHER_LOCATION_KEY:
       text_layer_set_text(weather_loc_layer, new_tuple->value->cstring);
-
-      //update the comm icon only once per call
-      if (comm_bitmap)
-      {
-        gbitmap_destroy(comm_bitmap);
-      }
-      comm_bitmap = gbitmap_create_with_resource(RESOURCE_ID_IMG_ICON_CLEAR);
-      bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
-      layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
       break;
     case CONFIG_BT_VIBRATE:
       if (strcmp(new_tuple->value->cstring, "On") == 0)
