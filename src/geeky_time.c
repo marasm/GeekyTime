@@ -3,8 +3,8 @@
 #include "generated/appinfo.h"
 
 //the below 2 lines disable logging
-#undef APP_LOG
-#define APP_LOG(...)
+// #undef APP_LOG
+// #define APP_LOG(...)
 
 static Window *window;
 
@@ -89,8 +89,65 @@ static bool is_valid_temp(const char * st)
   return true;
 }
 
+static void log_app_msg_result(AppMessageResult app_message_error)
+{
+  char *error_desc;
+  switch (app_message_error) {
+    case APP_MSG_OK:
+      error_desc = "APP_MSG_OK";
+      break;
+    case APP_MSG_SEND_TIMEOUT:
+      error_desc =  "APP_MSG_SEND_TIMEOUT";
+      break;
+    case APP_MSG_SEND_REJECTED:
+      error_desc =  "APP_MSG_SEND_REJECTED";
+      break;
+    case APP_MSG_NOT_CONNECTED:
+      error_desc =  "APP_MSG_NOT_CONNECTED";
+      break;
+    case APP_MSG_APP_NOT_RUNNING:
+      error_desc =  "APP_MSG_APP_NOT_RUNNING";
+      break;
+    case APP_MSG_INVALID_ARGS:
+      error_desc =  "APP_MSG_INVALID_ARGS";
+      break;
+    case APP_MSG_BUSY:
+      error_desc =  "APP_MSG_BUSY";
+      break;
+    case APP_MSG_BUFFER_OVERFLOW:
+      error_desc =  "APP_MSG_BUFFER_OVERFLOW";
+      break;
+    case APP_MSG_ALREADY_RELEASED:
+      error_desc =  "APP_MSG_ALREADY_RELEASED";
+      break;
+    case APP_MSG_CALLBACK_ALREADY_REGISTERED:
+      error_desc =  "APP_MSG_CALLBACK_ALREADY_REGISTERED";
+      break;
+    case APP_MSG_CALLBACK_NOT_REGISTERED:
+      error_desc =  "APP_MSG_CALLBACK_NOT_REGISTERED";
+      break;
+    case APP_MSG_OUT_OF_MEMORY:
+      error_desc =  "APP_MSG_OUT_OF_MEMORY";
+      break;
+    case APP_MSG_CLOSED:
+      error_desc =  "APP_MSG_CLOSED";
+      break;
+    case APP_MSG_INTERNAL_ERROR:
+      error_desc =  "APP_MSG_INTERNAL_ERROR";
+      break;
+    default:
+      error_desc =  "UNKNOWN ERROR";
+      break;
+  }
+
+  if (error_desc != NULL)
+  {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %s", error_desc);
+  }
+}
+
 static void send_cmd(void) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending sync message to phone...");
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "send_cmd called");
   
   if (comm_bitmap)
   {
@@ -104,9 +161,11 @@ static void send_cmd(void) {
   Tuplet value = TupletInteger(1, 1);
 
   DictionaryIterator *iter;
-  app_message_outbox_begin(&iter);
+  AppMessageResult res = app_message_outbox_begin(&iter);
 
-  if (iter == NULL) {
+  if (iter == NULL ) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Dictionary was empty - quiting");
+    log_app_msg_result(res);
     return;
   }
 
@@ -115,6 +174,7 @@ static void send_cmd(void) {
 
   app_message_outbox_send();
   sync_msg_count++;
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Sent sync message to phone...");
 }
 
 static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
@@ -272,59 +332,8 @@ static void handle_battery(BatteryChargeState charge_state) {
 
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
-  char *error_desc;
-  switch (app_message_error) {
-    case APP_MSG_OK:
-      error_desc = "APP_MSG_OK";
-      break;
-    case APP_MSG_SEND_TIMEOUT:
-      error_desc =  "APP_MSG_SEND_TIMEOUT";
-      break;
-    case APP_MSG_SEND_REJECTED:
-      error_desc =  "APP_MSG_SEND_REJECTED";
-      break;
-    case APP_MSG_NOT_CONNECTED:
-      error_desc =  "APP_MSG_NOT_CONNECTED";
-      break;
-    case APP_MSG_APP_NOT_RUNNING:
-      error_desc =  "APP_MSG_APP_NOT_RUNNING";
-      break;
-    case APP_MSG_INVALID_ARGS:
-      error_desc =  "APP_MSG_INVALID_ARGS";
-      break;
-    case APP_MSG_BUSY:
-      error_desc =  "APP_MSG_BUSY";
-      break;
-    case APP_MSG_BUFFER_OVERFLOW:
-      error_desc =  "APP_MSG_BUFFER_OVERFLOW";
-      break;
-    case APP_MSG_ALREADY_RELEASED:
-      error_desc =  "APP_MSG_ALREADY_RELEASED";
-      break;
-    case APP_MSG_CALLBACK_ALREADY_REGISTERED:
-      error_desc =  "APP_MSG_CALLBACK_ALREADY_REGISTERED";
-      break;
-    case APP_MSG_CALLBACK_NOT_REGISTERED:
-      error_desc =  "APP_MSG_CALLBACK_NOT_REGISTERED";
-      break;
-    case APP_MSG_OUT_OF_MEMORY:
-      error_desc =  "APP_MSG_OUT_OF_MEMORY";
-      break;
-    case APP_MSG_CLOSED:
-      error_desc =  "APP_MSG_CLOSED";
-      break;
-    case APP_MSG_INTERNAL_ERROR:
-      error_desc =  "APP_MSG_INTERNAL_ERROR";
-      break;
-    default:
-      error_desc =  "UNKNOWN ERROR";
-      break;
-  }
-
-  if (error_desc != NULL)
-  {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %s", error_desc);
-  }
+  
+  log_app_msg_result(app_message_error);
 
   if (comm_bitmap)
   {
@@ -529,7 +538,7 @@ static void init() {
   GFont custom_font_sync_count = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_TINY_10));
   sync_count_layer = text_layer_create(GRect(1, 1, 33, 15));
   text_layer_set_font(sync_count_layer, custom_font_sync_count);
-  text_layer_set_text_color(sync_count_layer, GColorBlack); //black to hide the debug info
+  text_layer_set_text_color(sync_count_layer, GColorWhite); //black to hide the debug info
   text_layer_set_background_color(sync_count_layer, GColorClear);
   text_layer_set_text_alignment(sync_count_layer, GTextAlignmentLeft);
   layer_add_child(window_layer, text_layer_get_layer(sync_count_layer));
@@ -664,7 +673,7 @@ static void init() {
       ARRAY_LENGTH(initial_values),
       sync_tuple_changed_callback, sync_error_callback, NULL);
 
-//   send_cmd();
+  send_cmd();
 }
 
 static void deinit() {
