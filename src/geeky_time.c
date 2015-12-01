@@ -158,18 +158,17 @@ static void send_cmd(void) {
   bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
   layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
 
-  Tuplet value = TupletInteger(1, 1);
-
   DictionaryIterator *iter;
   AppMessageResult res = app_message_outbox_begin(&iter);
 
-  if (iter == NULL ) {
+  if (!iter) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Dictionary was empty - quiting");
     log_app_msg_result(res);
     return;
-  }
+   }
 
-  dict_write_tuplet(iter, &value);
+  int value = 1;
+  dict_write_int(iter, 1, &value, sizeof(int), true);
   dict_write_end(iter);
 
   app_message_outbox_send();
@@ -647,8 +646,8 @@ static void init() {
 
 
   //GET WEATHER FROM THE WEB
-  const int inbound_size = 128;
-  const int outbound_size = 128;
+  const int inbound_size = 64;
+  const int outbound_size = 64;
   app_message_open(inbound_size, outbound_size);
 
   char *bt_vibrate_str;

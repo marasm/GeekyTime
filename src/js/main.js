@@ -10,11 +10,11 @@ var faceVersion = '1.0'; //default version
 
 function sendToWatchSuccess(e)
 {
-  console.log("Message sent to watch successfully!");
+  console.log("Message #" + e.data.transactionId + " sent to watch successfully!");
 }
 function sendToWatchFail(e)
 {
-  console.log("Message sending failed: " + e);
+  console.log("Message #" + e.data.transactionId + " sending failed: " + e.error.message);
 }
 
 function parseWeatherResponse() {
@@ -59,11 +59,12 @@ function parseWeatherResponse() {
       console.log('Temp F=' + temperatureF);
       console.log('Location=' + location);
 
-      Pebble.sendAppMessage({
+      var msgId = Pebble.sendAppMessage({
         "icon":icon,
         "temperature":temperature.toString(),
         "location":location}, sendToWatchSuccess, sendToWatchFail);
-
+      
+      console.log("Sending message #" + msgId + " to watch ...");
     }
     else
     {
@@ -113,23 +114,24 @@ function locationError(err) {
       errCode = 'PD';
       break;
   }
-  Pebble.sendAppMessage({
+  var msgId = Pebble.sendAppMessage({
     "icon":"00",
     "temperature":"--",
     "location":"LocErr: " + errCode
-  });
+  }, sendToWatchSuccess, sendToWatchFail);
+  console.log("Sending message #" + msgId + " to watch ...");
 }
 
 function initConfigOptions()
 {
-  if (AppInfo != null)
+  if (typeof AppInfo === 'undefined' || AppInfo === null)
   {
-    console.log("WatchFace version: " + AppInfo.versionLabel);
-    faceVersion = AppInfo.versionLabel;
+    console.log("AppInfo undefined!!! Will use default version: " + faceVersion);    
   }
   else
   {
-    console.log("AppInfo undefined!!! Will use default version: " + faceVersion);
+    console.log("WatchFace version: " + AppInfo.versionLabel);
+    faceVersion = AppInfo.versionLabel;
   }
   var tempScaleLS = localStorage.getItem('tempScale');
   if (tempScaleLS !== null && tempScaleLS != 'undefined' && tempScaleLS.length == 1)
@@ -226,9 +228,11 @@ function applyAndStoreConfigOptions(inOptions)
 function sendWatchConfigToWatch()
 {
   console.log('Sending btVibrate=' + btVibrate + " to the watch");
-  console.log('Sending ... dateFormat=' + dateFormat + " to the watch");
-  Pebble.sendAppMessage({"btVibrate" : btVibrate,
+  console.log('Sending dateFormat=' + dateFormat + " to the watch");
+  var msgId = Pebble.sendAppMessage({"btVibrate" : btVibrate,
                          "dateFormat" : dateFormat}, sendToWatchSuccess, sendToWatchFail);
+                         
+  console.log("Sending message #" + msgId + " to watch ...");
 }
 
 var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minutes
@@ -259,8 +263,8 @@ Pebble.addEventListener("ready",
 
 Pebble.addEventListener("appmessage",
                         function(e) {
+                          console.log("app message called");
                           getAppropriateWeatherData();
-                          console.log(e.type);
                         });
 
 Pebble.addEventListener("webviewclosed",
@@ -274,7 +278,7 @@ Pebble.addEventListener("webviewclosed",
 
 Pebble.addEventListener("showConfiguration",
                          function() {
-                         console.log("showing configuration +");
+                         console.log("showing configuration");
                          initConfigOptions();
                          Pebble.openURL('http://pebbleappcfg.herokuapp.com/GeekyTime/geekyTimeCfg.html?tempScale=' + tempScale + '&tempCorrect=' + tempCorrect + '&btVibrate=' + btVibrate + '&dateFormat=' + dateFormat + '&autoLocation=' + autoLocation + '&manLocation=' + manLocation + '&allowLocSelect=true' + '&faceVersion=' + faceVersion);
                          });
