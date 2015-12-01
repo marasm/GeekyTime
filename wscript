@@ -19,6 +19,7 @@ def configure(ctx):
 
 def build(ctx):
     ctx.load('pebble_sdk')
+    ctx.set_group('bundle')
 	
 	# Generate appinfo.h
     ctx(rule=generate_appinfo_h, source='appinfo.json', target='../src/generated/appinfo.h')
