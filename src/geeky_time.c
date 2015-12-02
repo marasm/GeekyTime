@@ -206,7 +206,14 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
     text_layer_set_text(time_layer, time_text);
     text_layer_set_text(date_layer, date_text);
     
-    //if the temp has not been refreshed yet ("--") do it now
+    //initialize the last upd time with current time if it is still default
+    if (strcmp(last_upd_time_text, "00:00") == 0)
+    {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "setting last update time to current time");
+      strncpy(last_upd_time_text, time_text, sizeof(time_text));
+    }
+    
+    //if the temp has not been refreshed yet ("--") and it has been more than a minute since last try do it now
     if(temp_layer &&
        text_layer_get_text(temp_layer) != NULL &&
        strcmp(last_upd_time_text, time_text) != 0 &&
@@ -672,7 +679,6 @@ static void init() {
       ARRAY_LENGTH(initial_values),
       sync_tuple_changed_callback, sync_error_callback, NULL);
 
-  send_cmd();
 }
 
 static void deinit() {
