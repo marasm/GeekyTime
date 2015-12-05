@@ -89,8 +89,65 @@ static bool is_valid_temp(const char * st)
   return true;
 }
 
+static void log_app_msg_result(AppMessageResult app_message_error)
+{
+  char *error_desc;
+  switch (app_message_error) {
+    case APP_MSG_OK:
+      error_desc = "APP_MSG_OK";
+      break;
+    case APP_MSG_SEND_TIMEOUT:
+      error_desc =  "APP_MSG_SEND_TIMEOUT";
+      break;
+    case APP_MSG_SEND_REJECTED:
+      error_desc =  "APP_MSG_SEND_REJECTED";
+      break;
+    case APP_MSG_NOT_CONNECTED:
+      error_desc =  "APP_MSG_NOT_CONNECTED";
+      break;
+    case APP_MSG_APP_NOT_RUNNING:
+      error_desc =  "APP_MSG_APP_NOT_RUNNING";
+      break;
+    case APP_MSG_INVALID_ARGS:
+      error_desc =  "APP_MSG_INVALID_ARGS";
+      break;
+    case APP_MSG_BUSY:
+      error_desc =  "APP_MSG_BUSY";
+      break;
+    case APP_MSG_BUFFER_OVERFLOW:
+      error_desc =  "APP_MSG_BUFFER_OVERFLOW";
+      break;
+    case APP_MSG_ALREADY_RELEASED:
+      error_desc =  "APP_MSG_ALREADY_RELEASED";
+      break;
+    case APP_MSG_CALLBACK_ALREADY_REGISTERED:
+      error_desc =  "APP_MSG_CALLBACK_ALREADY_REGISTERED";
+      break;
+    case APP_MSG_CALLBACK_NOT_REGISTERED:
+      error_desc =  "APP_MSG_CALLBACK_NOT_REGISTERED";
+      break;
+    case APP_MSG_OUT_OF_MEMORY:
+      error_desc =  "APP_MSG_OUT_OF_MEMORY";
+      break;
+    case APP_MSG_CLOSED:
+      error_desc =  "APP_MSG_CLOSED";
+      break;
+    case APP_MSG_INTERNAL_ERROR:
+      error_desc =  "APP_MSG_INTERNAL_ERROR";
+      break;
+    default:
+      error_desc =  "UNKNOWN ERROR";
+      break;
+  }
+
+  if (error_desc != NULL)
+  {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %s", error_desc);
+  }
+}
+
 static void send_cmd(void) {
-  APP_LOG(APP_LOG_LEVEL_DEBUG, "Sending sync message to phone...");
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "send_cmd called");
   
   if (comm_bitmap)
   {
@@ -101,20 +158,22 @@ static void send_cmd(void) {
   bitmap_layer_set_bitmap(comm_layer, comm_bitmap);
   layer_mark_dirty(bitmap_layer_get_layer(comm_layer));
 
-  Tuplet value = TupletInteger(1, 1);
-
   DictionaryIterator *iter;
-  app_message_outbox_begin(&iter);
+  AppMessageResult res = app_message_outbox_begin(&iter);
 
-  if (iter == NULL) {
+  if (!iter) {
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Dictionary was empty - quiting");
+    log_app_msg_result(res);
     return;
-  }
+   }
 
-  dict_write_tuplet(iter, &value);
+  int value = 1;
+  dict_write_int(iter, 1, &value, sizeof(int), true);
   dict_write_end(iter);
 
   app_message_outbox_send();
   sync_msg_count++;
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Sent sync message to phone...");
 }
 
 static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
@@ -147,7 +206,14 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
     text_layer_set_text(time_layer, time_text);
     text_layer_set_text(date_layer, date_text);
     
-    //if the temp has not been refreshed yet ("--") do it now
+    //initialize the last upd time with current time if it is still default
+    if (strcmp(last_upd_time_text, "00:00") == 0)
+    {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "setting last update time to current time");
+      strncpy(last_upd_time_text, time_text, sizeof(time_text));
+    }
+    
+    //if the temp has not been refreshed yet ("--") and it has been more than a minute since last try do it now
     if(temp_layer &&
        text_layer_get_text(temp_layer) != NULL &&
        strcmp(last_upd_time_text, time_text) != 0 &&
@@ -272,59 +338,8 @@ static void handle_battery(BatteryChargeState charge_state) {
 
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
-  char *error_desc;
-  switch (app_message_error) {
-    case APP_MSG_OK:
-      error_desc = "APP_MSG_OK";
-      break;
-    case APP_MSG_SEND_TIMEOUT:
-      error_desc =  "APP_MSG_SEND_TIMEOUT";
-      break;
-    case APP_MSG_SEND_REJECTED:
-      error_desc =  "APP_MSG_SEND_REJECTED";
-      break;
-    case APP_MSG_NOT_CONNECTED:
-      error_desc =  "APP_MSG_NOT_CONNECTED";
-      break;
-    case APP_MSG_APP_NOT_RUNNING:
-      error_desc =  "APP_MSG_APP_NOT_RUNNING";
-      break;
-    case APP_MSG_INVALID_ARGS:
-      error_desc =  "APP_MSG_INVALID_ARGS";
-      break;
-    case APP_MSG_BUSY:
-      error_desc =  "APP_MSG_BUSY";
-      break;
-    case APP_MSG_BUFFER_OVERFLOW:
-      error_desc =  "APP_MSG_BUFFER_OVERFLOW";
-      break;
-    case APP_MSG_ALREADY_RELEASED:
-      error_desc =  "APP_MSG_ALREADY_RELEASED";
-      break;
-    case APP_MSG_CALLBACK_ALREADY_REGISTERED:
-      error_desc =  "APP_MSG_CALLBACK_ALREADY_REGISTERED";
-      break;
-    case APP_MSG_CALLBACK_NOT_REGISTERED:
-      error_desc =  "APP_MSG_CALLBACK_NOT_REGISTERED";
-      break;
-    case APP_MSG_OUT_OF_MEMORY:
-      error_desc =  "APP_MSG_OUT_OF_MEMORY";
-      break;
-    case APP_MSG_CLOSED:
-      error_desc =  "APP_MSG_CLOSED";
-      break;
-    case APP_MSG_INTERNAL_ERROR:
-      error_desc =  "APP_MSG_INTERNAL_ERROR";
-      break;
-    default:
-      error_desc =  "UNKNOWN ERROR";
-      break;
-  }
-
-  if (error_desc != NULL)
-  {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %s", error_desc);
-  }
+  
+  log_app_msg_result(app_message_error);
 
   if (comm_bitmap)
   {
@@ -638,8 +653,8 @@ static void init() {
 
 
   //GET WEATHER FROM THE WEB
-  const int inbound_size = 128;
-  const int outbound_size = 128;
+  const int inbound_size = 64;
+  const int outbound_size = 64;
   app_message_open(inbound_size, outbound_size);
 
   char *bt_vibrate_str;
@@ -664,7 +679,6 @@ static void init() {
       ARRAY_LENGTH(initial_values),
       sync_tuple_changed_callback, sync_error_callback, NULL);
 
-//   send_cmd();
 }
 
 static void deinit() {
