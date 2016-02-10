@@ -3,8 +3,8 @@ var tempScale = 'F';
 var tempCorrect = 0;
 var btVibrate = 'On';
 var dateFormat = 'mmdd';
-var autoLocation = 'Off';
-var manLocation = 'Talavera de la Reina, ES';
+var autoLocation = 'On';
+var manLocation = '';
 var owmAppId = '9b46f205cf161eb68ebcf12970587b88';
 var faceVersion = '1.0'; //default version
 
