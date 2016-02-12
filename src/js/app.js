@@ -233,7 +233,7 @@ function sendWatchConfigToWatch()
   var msgId = Pebble.sendAppMessage({"btVibrate" : btVibrate,
                          "dateFormat" : dateFormat}, sendToWatchSuccess, sendToWatchFail);
                          
-  console.log("Sending message #" + msgId + " to watch ...");
+  console.log("Sending config msg to watch ...");
 }
 
 var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minutes
