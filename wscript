@@ -44,12 +44,7 @@ def build(ctx):
         else:
             binaries.append({'platform': p, 'app_elf': app_elf})
 			
-	# Concatenate all JS files into pebble-js-app.js prior to building.
-	all_js = "\n".join([node.read() for node in ctx.path.ant_glob('src/js/**/*.js', excl='src/js/pebble-js-app.js')])
-	out_js_node = ctx.path.make_node('src/js/pebble-js-app.js')
-	out_js_node.write(all_js)
-
-    ctx.pbl_bundle(binaries=binaries, js=out_js_node)
+    ctx.pbl_bundle(binaries=binaries, js=ctx.path.ant_glob('src/js/**/*.js'), js_entry_file='src/js/app.js')
 
 def generate_appinfo_h(task):
     src = task.inputs[0].abspath()
@@ -68,7 +63,8 @@ def generate_appinfo_js(task):
     target = task.outputs[0].abspath()
     data = open(src).read().strip()
     f = open(target, 'w')
-    f.write('var AppInfo = ')
+    f.write('var appInfo = ')
     f.write(data)
     f.write(';\n\n')
+    f.write('module.exports.appInfo = appInfo;')
     f.close()

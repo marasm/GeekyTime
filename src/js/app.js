@@ -124,14 +124,15 @@ function locationError(err) {
 
 function initConfigOptions()
 {
-  if (typeof AppInfo === 'undefined' || AppInfo === null)
+  var appinfo = require('generated/appinfo');
+  if (typeof appinfo === 'undefined' || typeof appinfo.appInfo === 'undefined' || appinfo.appInfo === null)
   {
     console.log("AppInfo undefined!!! Will use default version: " + faceVersion);    
   }
   else
   {
-    console.log("WatchFace version: " + AppInfo.versionLabel);
-    faceVersion = AppInfo.versionLabel;
+    console.log("WatchFace version: " + appinfo.appInfo.versionLabel);
+    faceVersion = appinfo.appInfo.versionLabel;
   }
   var tempScaleLS = localStorage.getItem('tempScale');
   if (tempScaleLS !== null && tempScaleLS != 'undefined' && tempScaleLS.length == 1)
@@ -232,7 +233,7 @@ function sendWatchConfigToWatch()
   var msgId = Pebble.sendAppMessage({"btVibrate" : btVibrate,
                          "dateFormat" : dateFormat}, sendToWatchSuccess, sendToWatchFail);
                          
-  console.log("Sending message #" + msgId + " to watch ...");
+  console.log("Sending config msg to watch ...");
 }
 
 var locationOptions = { "timeout": 30000, "maximumAge": 600000 };//30s, 10 minutes
