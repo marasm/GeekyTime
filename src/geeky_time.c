@@ -32,7 +32,7 @@ static GFont custom_font_temp_40;
 static int sync_msg_count = 0;
 static bool bt_connected = 1;
 static AppSync sync;
-static uint8_t sync_buffer[64];
+static uint8_t sync_buffer[128];
 static bool bt_vibrate = 1;
 static char *date_format = "mmdd";
 static char last_upd_time_text[] = "00:00";
@@ -142,7 +142,7 @@ static void log_app_msg_result(AppMessageResult app_message_error)
 
   if (error_desc != NULL)
   {
-    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Error: %s", error_desc);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "App Message Sync Result: %s", error_desc);
   }
 }
 
@@ -339,6 +339,7 @@ static void handle_battery(BatteryChargeState charge_state) {
 
 static void sync_error_callback(DictionaryResult dict_error, AppMessageResult app_message_error, void *context) {
   
+  APP_LOG(APP_LOG_LEVEL_DEBUG, "Sync Error CallBack!");
   log_app_msg_result(app_message_error);
 
   if (comm_bitmap)
