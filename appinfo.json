@@ -2,6 +2,7 @@
     "appKeys": {
         "btVibrate": 100,
         "dateFormat": 101,
+        "refreshIntrvl": 102,
         "icon": 0,
         "location": 2,
         "temperature": 1
@@ -207,7 +208,7 @@
     "enableMultiJS": true,
     "uuid": "42950f77-0eda-476b-958a-df87537d3eb9",
     "versionCode": 1,
-    "versionLabel": "3.5",
+    "versionLabel": "4.0",
     "watchapp": {
         "watchface": true
     }
