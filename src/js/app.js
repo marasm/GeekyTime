@@ -249,7 +249,7 @@ function sendWatchConfigToWatch()
   var msgId = Pebble.sendAppMessage(
                         {"btVibrate" : btVibrate,
                          "dateFormat" : dateFormat,
-                         "refreshIntrvl" : refreshIntrvl}, 
+                         "refreshIntrvl" : parseInt(refreshIntrvl)}, 
                           sendToWatchSuccess, sendToWatchFail);
                          
   console.log("Sending config msg to watch ...");
