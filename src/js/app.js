@@ -5,6 +5,7 @@ var btVibrate = 'On';
 var dateFormat = 'mmdd';
 var autoLocation = 'On';
 var manLocation = '';
+var refreshIntrvl = 30;
 var owmAppId = '9b46f205cf161eb68ebcf12970587b88';
 var faceVersion = '1.0'; //default version
 
@@ -124,7 +125,7 @@ function locationError(err) {
 
 function initConfigOptions()
 {
-  var appinfo = require('generated/appinfo');
+  var appinfo = require('./generated/appinfo');
   if (typeof appinfo === 'undefined' || typeof appinfo.appInfo === 'undefined' || appinfo.appInfo === null)
   {
     console.log("AppInfo undefined!!! Will use default version: " + faceVersion);    
@@ -180,6 +181,13 @@ function initConfigOptions()
     console.log("Assigned manLocation from storage=" + manLocationLS);
   }
   
+  var refreshIntrvlLS = localStorage.getItem('refreshIntrvl');
+  if (refreshIntrvlLS !== null && refreshIntrvlLS != 'undefined' && refreshIntrvlLS.length > 0)
+  {
+    refreshIntrvl = refreshIntrvlLS;
+    console.log("Assigned refreshIntrvl from storage=" + refreshIntrvlLS);
+  }
+  
   sendWatchConfigToWatch();
 }
 
@@ -221,6 +229,13 @@ function applyAndStoreConfigOptions(inOptions)
       localStorage.setItem('dateFormat', inOptions.dateFormat);
       dateFormat = inOptions.dateFormat;
     }
+    
+    if (inOptions.refreshIntrvl !== null && inOptions.refreshIntrvl.length > 0)
+    {
+      localStorage.setItem('refreshIntrvl', inOptions.refreshIntrvl);
+      refreshIntrvl = inOptions.refreshIntrvl;
+    }
+    
     sendWatchConfigToWatch();
   }
 }
@@ -230,8 +245,12 @@ function sendWatchConfigToWatch()
 {
   console.log('Sending btVibrate=' + btVibrate + " to the watch");
   console.log('Sending dateFormat=' + dateFormat + " to the watch");
-  var msgId = Pebble.sendAppMessage({"btVibrate" : btVibrate,
-                         "dateFormat" : dateFormat}, sendToWatchSuccess, sendToWatchFail);
+  console.log('Sending refreshIntrvl=' + refreshIntrvl + " to the watch");
+  var msgId = Pebble.sendAppMessage(
+                        {"btVibrate" : btVibrate,
+                         "dateFormat" : dateFormat,
+                         "refreshIntrvl" : parseInt(refreshIntrvl)}, 
+                          sendToWatchSuccess, sendToWatchFail);
                          
   console.log("Sending config msg to watch ...");
 }
@@ -252,7 +271,7 @@ function getAppropriateWeatherData()
 
 Pebble.addEventListener("ready",
                         function(e) {
-                          console.log("JS - ready called " + e.ready);
+                          console.log("JS - ready called with param: " + e.ready);
                           if (!initDone)
                           {
                             console.log("JS - performing init tasks");
@@ -286,6 +305,7 @@ Pebble.addEventListener("showConfiguration",
                            + '&tempCorrect=' + tempCorrect 
                            + '&btVibrate=' + btVibrate 
                            + '&dateFormat=' + dateFormat 
+                           + '&refreshIntrvl=' + refreshIntrvl 
                            + '&autoLocation=' + autoLocation 
                            + '&manLocation=' + manLocation 
                            + '&allowLocSelect=true' 

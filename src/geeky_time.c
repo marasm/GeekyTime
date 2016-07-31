@@ -3,8 +3,8 @@
 #include "generated/appinfo.h"
 
 //the below 2 lines disable logging
-#undef APP_LOG
-#define APP_LOG(...)
+//#undef APP_LOG
+//#define APP_LOG(...)
 
 static Window *window;
 
@@ -36,13 +36,16 @@ static uint8_t sync_buffer[128];
 static bool bt_vibrate = 1;
 static char *date_format = "mmdd";
 static char last_upd_time_text[] = "00:00";
+static int32_t refresh_interval = 30;
+static int minutes_since_refresh = 0;
 
 enum TupleKey {
   WEATHER_ICON_KEY = 0x0,         // TUPLE_CSTRING
   WEATHER_TEMPERATURE_KEY = 0x1,  // TUPLE_CSTRING
   WEATHER_LOCATION_KEY = 0x2,     // TUPLE_CSTRING
   CONFIG_BT_VIBRATE = 0x64,       // TUPLE_CSTRING (100 in decimal)
-  CONFIG_DATE_FORMAT = 0x65       // TUPLE_CSTRING (101 in decimal)
+  CONFIG_DATE_FORMAT = 0x65,      // TUPLE_CSTRING (101 in decimal)
+  CONFIG_REFRESH_INTRVL = 0x66    // TUPLE_INTEGER (102 in decimal)
 };
 
 #ifdef PBL_COLOR
@@ -220,6 +223,7 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
        (strcmp("--", text_layer_get_text(temp_layer)) == 0 || !is_valid_temp(text_layer_get_text(temp_layer))))
     {
       APP_LOG(APP_LOG_LEVEL_DEBUG, "invalid temp detected during minute tick. Request weather refresh");
+
       strncpy(last_upd_time_text, time_text, sizeof(time_text));
       send_cmd();
     }
@@ -228,13 +232,25 @@ static void handle_time_tick(struct tm* tick_time, TimeUnits units_changed) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "sync count: %i ", sync_msg_count);
     snprintf(sync_count_text, sizeof(sync_count_text), "%d", sync_msg_count);
     text_layer_set_text(sync_count_layer, sync_count_text);
+    
+    //see if we need to refresh the weather
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "%i minutes elapsed since last refresh", minutes_since_refresh);
+    if (minutes_since_refresh >= refresh_interval)
+    {
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Weather refresh timeout reached. Refreshing.");
+      minutes_since_refresh = 0;
+      send_cmd();
+    }
+    else
+    {
+      minutes_since_refresh++;
+    }
+    
   }
-  
 
-  //Make sure that the weather is refreshed at least hourly
   if(units_changed & HOUR_UNIT) {
     APP_LOG(APP_LOG_LEVEL_DEBUG, "Hour tick");
-    send_cmd();
+    // send_cmd();
   }
 
 }
@@ -515,6 +531,10 @@ static void sync_tuple_changed_callback(const uint32_t key, const Tuple* new_tup
       //update date to reflect the config change
       update_date_time();
       break;
+    case CONFIG_REFRESH_INTRVL:
+      APP_LOG(APP_LOG_LEVEL_DEBUG, "Refresh interval: %ld", new_tuple->value->int32);
+      refresh_interval = new_tuple->value->int32;
+      break;
   }
 }
 
@@ -673,7 +693,8 @@ static void init() {
     TupletCString(WEATHER_TEMPERATURE_KEY, "--"),
     TupletCString(WEATHER_LOCATION_KEY, "Unknown"),
     TupletCString(CONFIG_BT_VIBRATE, bt_vibrate_str),
-    TupletCString(CONFIG_DATE_FORMAT, date_format)
+    TupletCString(CONFIG_DATE_FORMAT, date_format),
+    TupletInteger(CONFIG_REFRESH_INTRVL, refresh_interval)
   };
 
   app_sync_init(&sync, sync_buffer, sizeof(sync_buffer), initial_values,
